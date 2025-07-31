@@ -1,3 +1,4 @@
+import { useNavigation, useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -36,6 +37,8 @@ const features = [
 ];
 
 export default function Features() {
+  const router = useRouter();
+  const navigation = useNavigation();
   const translateX = useRef(new Animated.Value(0)).current;
   const [currentSlide, setCurrentSlide] = useState(0);
   const featureBoxWidth = width / 3;
@@ -55,7 +58,7 @@ export default function Features() {
   }, [currentSlide]);
 
   const renderFeatureBox = (feature: any) => (
-    <TouchableOpacity key={feature.id} style={styles.featureBox}>
+    <TouchableOpacity key={feature.id} style={styles.featureBox} >
       <Image source={feature.image} style={{ width: 30, height: 30 }} />
       <Text style={styles.featureText}>{feature.text}</Text>
     </TouchableOpacity>

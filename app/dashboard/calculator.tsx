@@ -1,36 +1,56 @@
 import { Entypo, FontAwesome, FontAwesome5 } from '@expo/vector-icons';
-import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 
 export default function CalculatorScreen(){
   const [goldCarat, setGoldCarat] = useState('22');
-  const [weight, setWeight] = useState('');
+  const [weight, setWeight] = useState(0);
   const [weightUnit, setWeightUnit] = useState('g');
   const [makingCharges, setMakingCharges] = useState('');
-  const [result, setResult] = useState('');
-
+  const [result, setResult] = useState(false);
+  const [goldRate, setGoldRate] = useState(9177.6); // Example gold rate per gram
+  const [calculatedTotalAmount, setCalculatedTotalAmount] = useState(0);
+  const hallmarkingCharges = 45;
+  const packingCharges = 100;
+  const gst = 0.03;
+  const [weightAmount, setWeightAmount] = useState(0);
+  const [gstAmount, setGstAmount] = useState(0);
   const calculate = () => {
-    // perform calculation logic here
-    // for demonstration purposes, just log the values
-    console.log(`Gold Carat: ${goldCarat}`);
-    console.log(`Weight: ${weight} ${weightUnit}`);
-    console.log(`Making Charges: ${makingCharges}`);
-    // update result state with calculated value
-    setResult(`Result: ${goldCarat} ${weight} ${weightUnit} ${makingCharges}`);
+    setResult(true)
   };
   const handleCaratChange = (value:any) => {
     setGoldCarat(value);
   }
+  const calculations = () => {
+    const safeWeight = isNaN(weight) ? 0 : weight;
+    const weightInGrams = (weightUnit === 'kg' ? safeWeight * 1000 : safeWeight);
+    const goldValue = goldRate * weightInGrams;
+    const mc = parseFloat(makingCharges) || 0;
+    const beforeGST = goldValue + mc + hallmarkingCharges + packingCharges;
+    const gstValue = Number((beforeGST * gst).toFixed(2));
+    const grandTotal = Number((beforeGST + gstValue).toFixed(2));
+    setWeightAmount(Number(goldValue.toFixed(2)));
+    setGstAmount(gstValue);
+    setCalculatedTotalAmount(grandTotal);
+  };
+  useEffect(() => {
+    calculations();
+  }, [goldCarat, weight, weightUnit, makingCharges, goldRate]);
+
   const reset = () => {
     setGoldCarat('22');
-    setWeight('');
+    setWeight(0);
     setWeightUnit('g');
     setMakingCharges('');
-    setResult('');
+    setWeightAmount(0);
+    setGstAmount(0);
+    setCalculatedTotalAmount(0);  
+    setResult(false);
   };
 
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
     <View style={styles.container}>
       <View style={styles.form}>
         <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center',marginBottom:10}}>
@@ -64,12 +84,13 @@ export default function CalculatorScreen(){
         
         <View style={styles.inputContainer}>
             <TextInput
-              value={weight}
-              onChangeText={(text) => setWeight(text)}
+              value={weight > 0 ?JSON.stringify(weight) : ''}
+              onChangeText={(text) => setWeight(parseFloat(text))}
               keyboardType="numeric"
               placeholder="Enter weight here"
               style={styles.input}
               placeholderTextColor={'#999'}
+              
             />
         </View>
         <View style={styles.mb20}>
@@ -92,8 +113,11 @@ export default function CalculatorScreen(){
               placeholder: { color: '#999',marginTop:-8,fontSize:12 },
             }}
             items={[
-              { label: 'Option 1', value: 'option1' },
-              { label: 'Option 2', value: 'option2' },
+              { label: 'Nwabi', value: '0' },
+              { label: 'Long Set', value: '0' },
+              { label: 'Bangles', value: '0' },
+              { label: 'Gents Ring', value: '0' },
+              { label: 'Chain', value: '0' },
             ]}
           />
         </View>
@@ -112,7 +136,7 @@ export default function CalculatorScreen(){
               style={[
                 styles.radioButton,
               ]}
-              // onPress={calculate}
+              onPress={calculate}
             >
               <Entypo name="print" size={16}  />
               <Text style={[{textAlign: 'center',fontWeight:'bold',marginHorizontal:5,}]}>CALCULATE</Text>
@@ -120,8 +144,48 @@ export default function CalculatorScreen(){
           </View>
         </View>
       </View>
-      <Text style={styles.result}>{result}</Text>
+      <View style={result ? styles.show : styles.hide}>
+        <Text style={{fontSize: 18,fontWeight:'bold',marginVertical:10,textAlign:'center'}}>RESULTS</Text>
+        <View style={{padding: 15, backgroundColor: 'white',}}>
+          <View style={styles.resultBox}>
+            <Text style={styles.resultsMainText} >Gold Weight</Text>
+            <Text style={styles.resultsTextColon} > : </Text>
+            <Text style={styles.resultsTextCal} >{weight} {weightUnit == 'g' ? 'Grams' : 'Kilograms'}</Text>
+          </View>
+          <View style={styles.resultBox}>
+            <Text style={styles.resultsMainText} >Gold Weight Amount ( {goldCarat} K )</Text>
+            <Text style={styles.resultsTextColon} > : </Text>
+            <Text style={styles.resultsTextCal} >₹ {weightAmount}</Text>
+          </View>
+          <View style={styles.resultBox}>
+            <Text style={styles.resultsMainText} >Making Charges</Text>
+            <Text style={styles.resultsTextColon} > : </Text>
+            <Text style={styles.resultsTextCal} >0% / ₹0 </Text>
+          </View>
+          <View style={styles.resultBox}>
+            <Text style={styles.resultsMainText} >Hallmarking Charges</Text>
+            <Text style={styles.resultsTextColon} > : </Text>
+            <Text style={styles.resultsTextCal} >{hallmarkingCharges}</Text>
+          </View>
+          <View style={styles.resultBox} >
+            <Text style={styles.resultsMainText} >Packing Charges</Text>
+            <Text style={styles.resultsTextColon} > : </Text>
+            <Text style={styles.resultsTextCal} >{packingCharges} </Text>
+          </View>
+          <View style={styles.resultBox}>
+            <Text style={styles.resultsMainText} >GST </Text>
+            <Text style={styles.resultsTextColon} > : </Text>
+            <Text style={styles.resultsTextCal} >3% / ₹{gstAmount}</Text>
+          </View>
+          <View style={styles.resultBox}>
+            <Text style={styles.resultsMainText} >Grand Total</Text>
+            <Text style={styles.resultsTextColon} > : </Text>
+            <Text style={styles.resultsTextCal} >₹ {calculatedTotalAmount}</Text>
+          </View>
+        </View>
+      </View>
     </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -225,5 +289,32 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     height: 40,
     fontSize: 12,
+  },
+  resultBox:{
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingVertical: 7
+  },
+  resultsMainText:{
+    width:'60%',
+    fontWeight:'bold',
+    color:'#007A5E'
+  },
+  resultsTextColon:{
+    width:'5%',
+    fontSize:14,
+    fontWeight:800,
+    color:'#007A5E'
+  },
+  resultsTextCal:{
+    width:'35%',
+    textAlign:'right'
+  },
+  show:{
+    display: 'flex',
+  },
+  hide:{
+    display: 'none',
   }
 });

@@ -1,13 +1,16 @@
 import { Entypo } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter, useSegments } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Animated, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Animated, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 export default function Menu() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isDashboard, setIsDashboard] = useState(false);
   const segments = useSegments();
   const router = useRouter();
+  const [user, setUser] = useState(null);
   
   // Animation values
   const slideAnim = React.useRef(new Animated.Value(-Dimensions.get('window').width)).current;
@@ -28,6 +31,16 @@ export default function Menu() {
       useNativeDriver: true,
     }).start();
   }, [menuOpen]);
+  useEffect(() => {
+    const getUser = async () => {
+      let userJson:any  = await AsyncStorage.getItem('user');
+      userJson = JSON.parse(userJson);
+      if(!userJson && userJson !== null) {
+        setUser(userJson || null);
+      }
+    }
+    getUser();
+  },[]);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -35,7 +48,40 @@ export default function Menu() {
 
   const navigateTo = (route: any) => {
     setMenuOpen(false);
-    router.push(route);
+    router.navigate(route);
+  };
+
+  const handleLogout = () => {
+    setMenuOpen(false);
+
+    Alert.alert(
+      'Log out',
+      'Are you sure you want to log out?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Logout',
+          onPress: async () => {
+            await AsyncStorage.removeItem('userToken');
+            await AsyncStorage.removeItem('user');
+            Toast.show({
+              type: "success",
+              text1: "Logged out successfully",
+              position: "top",
+              visibilityTime: 1000,
+              onHide: () => {
+                router.navigate('/');
+              },
+            });
+          },
+          style: 'destructive',
+        },
+      ],
+      { cancelable: true },
+    );
   };
 
   return (
@@ -66,11 +112,11 @@ export default function Menu() {
           
           {/* Menu Items */}
           {/* <TouchableOpacity 
-            style={[styles.menuItem,(segments[segments.length - 1] == 'dashboard')? {backgroundColor:'white'} : {}]}
-            onPress={() => navigateTo('/dashboard')}
+            style={[styles.menuItem,(segments[segments.length - 1] == 'profile')? {backgroundColor:'white'} : {}]}
+            onPress={() => navigateTo('/profile')}
           >
-            <MaterialIcons name="dashboard" size={18} color="#333" />
-            <Text style={styles.menuText}>Dashboard</Text>
+            <FontAwesome name="user-circle" size={18} color="#333" />
+            <Text style={styles.menuText}>{user?.name || 'Profile'}</Text>
           </TouchableOpacity> */}
           
           {/* Add more menu items as needed */}
@@ -79,7 +125,7 @@ export default function Menu() {
         <View style={{position:'absolute',bottom:'0%'}}>
           <TouchableOpacity 
             style={styles.logoutButton}
-            onPress={() => navigateTo('/index')}
+            onPress={() => handleLogout()}
           >
             <Text style={styles.logoutText}>Logout</Text>
             <Entypo name="log-out" size={20} color="#333" />

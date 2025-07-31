@@ -16,7 +16,7 @@ export default function BankDetails(){
         <View style={{ }}>
           {/* <Text style={{fontSize:16,fontWeight:'bold',paddingVertical:10,alignSelf:'center'}}>OUR BANK DETAILS</Text> */}
           <View style={{width:'100%',backgroundColor:'#fff',padding:10,}}>
-                <Image source={require('../assets/images/bank1.png')} style={{width: '100%', height: 60, resizeMode: 'contain'}}/>
+                <Image source={require('../../assets/images/bank1.png')} style={{width: '100%', height: 60, resizeMode: 'contain'}}/>
               <View style={{paddingVertical:10,paddingHorizontal:5}}>
                 <FlatList
                   data={tableData}
@@ -46,23 +46,23 @@ export default function BankDetails(){
           <TouchableOpacity
             style={styles.directionsButton}
           >
-            <Image source={require('../assets/images/instagram.png')} style={styles.image} />
+            <Image source={require('../../assets/images/instagram.png')} style={styles.image} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.directionsButton}
           >
-            <Image source={require('../assets/images/whatsapp.png')} style={styles.image} />
+            <Image source={require('../../assets/images/whatsapp.png')} style={styles.image} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.directionsButton}
           >
-            <Image source={require('../assets/images/facebook.png')} style={styles.image} />
+            <Image source={require('../../assets/images/facebook.png')} style={styles.image} />
           </TouchableOpacity>
         </View>
         {/* Logo */}
         
         <View style={{alignSelf:'center',marginTop:0,justifyContent:'center',padding:10,borderBottomWidth:1}}>
-          <Image source={require('../assets/images/logo.png')} style={{width:200,height:65}} />
+          <Image source={require('../../assets/images/logo.png')} style={{width:200,height:65}} />
         </View>
         <Text style={{fontSize:12,fontWeight:'bold',paddingTop:5,alignSelf:'center',width:'70%',textAlign:'center'}}>Wide collection of customized jewellery</Text>
         <Text style={{fontSize:12,fontWeight:'bold',paddingBottom:5,alignSelf:'center',width:'70%',textAlign:'center'}}> Since 1975 in Amritsar, India</Text>

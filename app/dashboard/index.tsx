@@ -12,16 +12,16 @@ import {
   View
 } from "react-native";
 import { WebView } from "react-native-webview";
-import Features from "./components/features";
-import GoldRates from "./components/goldrates";
+import Features from "./../components/features";
+import GoldRates from "./../components/goldrates";
 
 const { width } = Dimensions.get("window");
 
 const images = [
-  require("../assets/images/bg-image.jpg"),
-  require("../assets/images/bg-image1.jpg"),
-  require("../assets/images/bg-image2.jpg"),
-  require("../assets/images/bg-image3.jpg"),
+  require("../../assets/images/bg-image.jpg"),
+  require("../../assets/images/bg-image1.jpg"),
+  require("../../assets/images/bg-image2.jpg"),
+  require("../../assets/images/bg-image3.jpg"),
 ];
 
 export default function Dashboard() {
@@ -70,7 +70,7 @@ export default function Dashboard() {
         
         {/* Static Logo */}
         <View style={styles.logoContainer}>
-          <Image source={require("../assets/images/logo.png")} style={styles.logo} />
+          <Image source={require("../../assets/images/logo.png")} style={styles.logo} />
         </View>
       </View>
 
@@ -85,19 +85,23 @@ export default function Dashboard() {
       <Text style={styles.caratMainText}>All Gold Rates With Purity </Text>
       <View style={styles.caratBoxMainContainer}>
         <View style={styles.caratBoxContainer}>
-          <TouchableOpacity style={styles.caratBox}>
-            <Text style={styles.caratText}><FontAwesome5 name="coins" size={14} color="#007A5E" /> 22 K</Text>
+          <TouchableOpacity style={[styles.caratBox,{borderRightWidth:1,borderBottomWidth:1,borderColor:'rgba(255,255,255,0.4)'}]}>
+            <Text style={[styles.caratText,styles.caratBoxLine]}><FontAwesome5 name="coins" size={14} color="#007A5E" /> 22 K</Text>
+            <Text style={styles.caratText}> ₹ 22000 </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.caratBox}>
-            <Text style={styles.caratText}><FontAwesome5 name="coins" size={14} color="#007A5E" /> 20 K</Text>
+          <TouchableOpacity style={[styles.caratBox,{borderLeftWidth:1,borderBottomWidth:1,borderColor:'rgba(255,255,255,0.4)'}]}>
+            <Text style={[styles.caratText,styles.caratBoxLine]}><FontAwesome5 name="coins" size={14} color="#007A5E" /> 20 K</Text>
+            <Text style={styles.caratText}> ₹ 20000 </Text>
           </TouchableOpacity>
         </View>
         <View style={styles.caratBoxContainer}>
-          <TouchableOpacity style={styles.caratBox}>
-            <Text style={styles.caratText}><FontAwesome5 name="coins" size={14} color="#007A5E" /> 18 K</Text>
+          <TouchableOpacity style={[styles.caratBox,{borderRightWidth:1,borderTopWidth:1,borderColor:'rgba(255,255,255,0.4)'}]}>
+            <Text style={[styles.caratText,styles.caratBoxLine]}><FontAwesome5 name="coins" size={14} color="#007A5E" /> 18 K</Text>
+            <Text style={styles.caratText}> ₹ 18000 </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.caratBox}>
-            <Text style={styles.caratText}><FontAwesome5 name="coins" size={14} color="#007A5E" /> 14 K</Text>
+          <TouchableOpacity style={[styles.caratBox,{borderLeftWidth:1,borderTopWidth:1,borderColor:'rgba(255,255,255,0.4)'}]}>
+            <Text style={[styles.caratText,styles.caratBoxLine]}><FontAwesome5 name="coins" size={14} color="#007A5E" /> 14 K</Text>
+            <Text style={styles.caratText}> ₹ 14000 </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -214,27 +218,28 @@ const styles = StyleSheet.create({
   },
   caratBoxMainContainer:{
     backgroundColor: "rgba(0,0,0,0.1)",
-    paddingHorizontal:20,
-    paddingVertical:10,
     marginBottom:20,
   },
   caratBoxContainer:{
     flexDirection: "row",
     justifyContent: "space-around",
-    marginVertical: 5
+    // marginVertical: 5
   },
   caratBox:{
     // backgroundColor: "white",
+    alignItems: "center",
+    width:"50%"
+  },
+  caratBoxLine:{
     borderBottomColor:'rgba(0,0,0,0.5)',
     borderBottomWidth:2,
-    paddingVertical: 10,
-    paddingHorizontal: 30,
     borderRadius:10,
-    alignItems: "center",
   },
   caratText:{
     fontSize:16,
     fontWeight:'bold',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
   },
   caratMainText:{
     textAlign: "center",

@@ -1,33 +1,26 @@
-import { Slot, useSegments } from "expo-router";
-import { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Slot, useRouter } from "expo-router";
+import { useEffect } from "react";
 import { View } from "react-native";
-import BottomNavigation from "./components/bottomNavigation";
-import Menu from "./components/menu";
-
+import Toast from "react-native-toast-message";
 export default function RootLayout() {
-  const [user, setUser] = useState(0);
-  const segments = useSegments(); 
-  const [routeName, setRouteName] = useState('');
+  const router = useRouter();
   useEffect(() => {
-    const current:any = segments[segments.length - 1];
-    if (current === undefined || current === 'index') {
-      setRouteName('index');
-    } else {
-      setRouteName(current);
+    const handleAuthUser = async () => {
+      const userJson = await AsyncStorage.getItem('user');
+      const user = userJson ? JSON.parse(userJson) : null;
+      if(user){
+        // User is authenticated, navigate to dashboard
+        console.log('User is authenticated', user);
+        router.navigate('/dashboard');
+      }
     }
-  }, [segments]);
-  useEffect(() => {
-    if(routeName === 'index'){
-      setUser(0);
-    }else{
-      setUser(1);
-    }
-  },[routeName])
+    handleAuthUser();
+  })
   return (
     <View style={{ flex: 1 }}>
-      {user && <Menu />}
-      <Slot /> {/* Renders the current active screen */}
-      {user && <BottomNavigation />}
+      <Slot />
+      <Toast />
     </View>
   );
 }

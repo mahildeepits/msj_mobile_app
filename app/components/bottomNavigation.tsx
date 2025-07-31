@@ -2,14 +2,12 @@ import { FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { useRouter, useSegments } from "expo-router";
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-export default function BottomNavigation(){
+export default function BottomNavigation({navigation}: any) {
     const router = useRouter();
     const segments = useSegments(); 
     const [routeName, setRouteName] = useState('');
     const handleRouting = (route: any) => {
-        if(!route.includes(routeName) && (routeName !== 'index' || route !== '/')){
-            router.push(route);
-        }
+        router.navigate(route);
     }
     useEffect(() => {
         const current:any = segments[segments.length - 1];
@@ -25,22 +23,22 @@ export default function BottomNavigation(){
                 <Ionicons name="home-outline" size={22} style={[routeName === 'dashboard'? styles.active : styles.inactive]} />
                 <Text style={[styles.navLabel,routeName === 'dashboard'? styles.active : styles.inactive]}>Home</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.navItem} onPress={() => handleRouting('/calculator')}>
+            <TouchableOpacity style={styles.navItem} onPress={() => handleRouting('/dashboard/calculator')}>
                 <FontAwesome5 name="calculator" size={22} style={[routeName === 'calculator'? styles.active : styles.inactive]} />
                 <Text style={[styles.navLabel,routeName === 'calculator'? styles.active : styles.inactive]}>Calculator</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.navItem} onPress={() => handleRouting('/bankdetails')}>
+            <TouchableOpacity style={styles.navItem} onPress={() => handleRouting('/dashboard/bankdetails')}>
+                <Ionicons name="business-outline" size={22} style={[routeName === 'bankdetails'? styles.active : styles.inactive]}/>
+                <Text style={[styles.navLabel,routeName === 'bankdetails'? styles.active : styles.inactive]}>Bank Details</Text>
+            </TouchableOpacity>
+            {/* <TouchableOpacity style={styles.navItem} onPress={() => handleRouting('/bankdetails')}>
                 <Ionicons name="business-outline" size={22} style={[routeName === 'bankdetails'? styles.active : styles.inactive]}/>
                 <Text style={[styles.navLabel,routeName === 'bankdetails'? styles.active : styles.inactive]}>Bank Details</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.navItem} onPress={() => handleRouting('/bankdetails')}>
                 <Ionicons name="business-outline" size={22} style={[routeName === 'bankdetails'? styles.active : styles.inactive]}/>
                 <Text style={[styles.navLabel,routeName === 'bankdetails'? styles.active : styles.inactive]}>Bank Details</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.navItem} onPress={() => handleRouting('/bankdetails')}>
-                <Ionicons name="business-outline" size={22} style={[routeName === 'bankdetails'? styles.active : styles.inactive]}/>
-                <Text style={[styles.navLabel,routeName === 'bankdetails'? styles.active : styles.inactive]}>Bank Details</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
     );
 }
@@ -58,7 +56,7 @@ const styles = StyleSheet.create({
   },
   navItem: {
     alignItems: "center",
-    width:'33%'
+    width:'33%',
   },
   navLabel: {
     fontSize: 12,
