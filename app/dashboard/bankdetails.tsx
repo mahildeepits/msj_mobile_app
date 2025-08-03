@@ -24,7 +24,7 @@ export default function BankDetails(){
     console.log('Fetching bank details...');
     let token = await AsyncStorage.getItem('userToken');
     token = JSON.parse(token || '{}');
-    const response = await axios.get(`http://192.168.137.1/MSJ/msj-backend/public/api/bank-details`,{
+    const response = await axios.get(`https://endlessly-outgoing-cowbird.ngrok-free.app/api/bank-details`,{
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
@@ -37,7 +37,7 @@ export default function BankDetails(){
     console.log('Fetching address details...');
     let token = await AsyncStorage.getItem('userToken');
     token = JSON.parse(token || '{}');
-    const response = await axios.get(`http://192.168.137.1/MSJ/msj-backend/public/api/adress-details`,{
+    const response = await axios.get(`https://endlessly-outgoing-cowbird.ngrok-free.app/api/adress-details`,{
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
