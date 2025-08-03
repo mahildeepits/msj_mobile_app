@@ -1,14 +1,55 @@
 import { Entypo, FontAwesome5 } from '@expo/vector-icons';
-import React from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import React, { useEffect, useMemo, useState } from 'react';
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 const tableData = [
-  {title:'Bank Name','value':'HDFC BANK'},
-  {title:'Account Name','value':'MOHINDER SINGH JEWELERS'},
-  {title:'Account Number','value':'1234567890'},
-  {title:'IFSC Code','value':'HDFC0001234'},
-  {title:'Branch Name','value':'MAll ROAD, AMRITSAR, PUNJAB'},
-]
+  { title: 'Bank Name', key: 'bank_name' },
+  { title: 'Account Name', key: 'account_name' },
+  { title: 'Account Number', key: 'account_number' },
+  { title: 'IFSC Code', key: 'ifsc_code' },
+  { title: 'Branch Name', key: 'branch_name' },
+];
 export default function BankDetails(){
+  const [bankDetails, setBankDetails] = useState();
+  const [addressDetails, setAddressDetails] = useState();
+  const flatListData = useMemo(() => {
+  if (!bankDetails) return [];
+  return tableData.map(item => ({
+    ...item,
+    value: bankDetails[item.key] || '',
+  }));
+}, [bankDetails]);
+  const getBankDetails = async () => {
+    console.log('Fetching bank details...');
+    let token = await AsyncStorage.getItem('userToken');
+    token = JSON.parse(token || '{}');
+    const response = await axios.get(`http://192.168.137.1/MSJ/msj-backend/public/api/bank-details`,{
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    setBankDetails(response.data.data);
+
+  }
+  const getAddressDetails = async () => {
+    console.log('Fetching address details...');
+    let token = await AsyncStorage.getItem('userToken');
+    token = JSON.parse(token || '{}');
+    const response = await axios.get(`http://192.168.137.1/MSJ/msj-backend/public/api/adress-details`,{
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    setAddressDetails(response.data.data);
+
+  }
+  useEffect(() => {
+    getBankDetails();
+    getAddressDetails();
+  }, []);
   return (
     <View style={{flex: 1,backgroundColor:'#C2DFD6',paddingTop:75}}>
       <View>
@@ -16,28 +57,32 @@ export default function BankDetails(){
         <View style={{ }}>
           {/* <Text style={{fontSize:16,fontWeight:'bold',paddingVertical:10,alignSelf:'center'}}>OUR BANK DETAILS</Text> */}
           <View style={{width:'100%',backgroundColor:'#fff',padding:10,}}>
-                <Image source={require('../../assets/images/bank1.png')} style={{width: '100%', height: 60, resizeMode: 'contain'}}/>
-              <View style={{paddingVertical:10,paddingHorizontal:5}}>
+            <Image source={require('../../assets/images/bank1.png')} style={{width: '100%', height: 60, resizeMode: 'contain'}}/>
+            <View style={{paddingVertical:10,paddingHorizontal:5}}>
+              {flatListData.length === 0 ? (
+                <Text>Loading bank details...</Text>
+              ) : (
                 <FlatList
-                  data={tableData}
-                  keyExtractor={(item) => item.title.toString()}
+                  data={flatListData}
+                  keyExtractor={(item) => item.title}
                   renderItem={({ item }) => (
                     <View style={styles.row}>
                       <Text style={[styles.cell,{width:'40%'}]}>{item.title}</Text>
-                      <Text style={[styles.cell,{width:'10%'}]}>::</Text>
+                      <Text style={[styles.cell,{width:'10%'}]}>:</Text>
                       <Text style={[styles.cell,{width:'50%'}]}>{item.value}</Text>
                     </View>
                   )}
                 />
-              </View>
+              )}
+            </View>
           </View>
         </View>
         {/* Basic Information */}
         <Text style={{fontSize:16,fontWeight:'bold',paddingVertical:5,marginTop:10,alignSelf:'center',borderBottomWidth:1}}>OUR CONTACT DETAILS</Text>
         <View style={{alignItems:'center',marginVertical:10,}}>
-          <Text style={{padding: 5,fontWeight:'bold'}}><FontAwesome5 name="phone-alt" size={14} />  Phone : +91 1234567890</Text>
-          <Text style={{padding: 5,fontWeight:'bold'}}><Entypo name="mail" size={16} />  Email : info@mohindersinghjewellers.com</Text>
-          <Text style={{padding: 5,fontWeight:'bold'}}><Entypo name="address" size={16} />  Address : Guru Bazar, Amritsar (143001) </Text>
+          <Text style={{padding: 5,fontWeight:'bold'}}><FontAwesome5 name="phone-alt" size={14} />  Phone : {addressDetails?.phone || ''} </Text>
+          <Text style={{padding: 5,fontWeight:'bold',textAlign:'center'}}><Entypo name="mail" size={16} />  Email : {addressDetails?.email || ''} </Text>
+          <Text style={{padding: 5,fontWeight:'bold'}}><Entypo name="address" size={16} />  Address : {addressDetails?.address || ''} </Text>
         </View>
         
         {/* follow us */}

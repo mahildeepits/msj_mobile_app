@@ -110,7 +110,7 @@ export default function Index(){
                     <FontAwesome name="phone" size={24} style={{alignSelf:'center'}} />
                   </View>
                   <View style={{width:'85%'}}>
-                    <TextInput style={{width:'100%'}} placeholder='Enter your Mobile Number' onChangeText={(value) => setPhone(value)} keyboardType='number-pad'  />
+                    <TextInput style={{width:'100%'}} placeholderTextColor={'#000'} placeholder='Enter your Mobile Number' onChangeText={(value) => setPhone(value)} keyboardType='number-pad'  />
                   </View>
                 </View>
                 <View style={{marginBottom:20,flexDirection: 'row', alignItems: 'center',borderWidth: 1, borderRadius:5}}>
@@ -118,7 +118,7 @@ export default function Index(){
                     <MaterialIcons name='password' size={24} style={{alignSelf:'center'}} />
                   </View>
                   <View style={{width:'85%',flexDirection:'row', alignItems: 'center'}}>
-                    <TextInput style={{width:'85%'}} placeholder='Enter your password' onChangeText={(value) => setPassword(value)} secureTextEntry={!showPassword}  />
+                    <TextInput style={{width:'85%'}} placeholder='Enter your password' placeholderTextColor={'#000'} onChangeText={(value) => setPassword(value)} secureTextEntry={!showPassword}  />
                     {showPassword ? (
                       <TouchableOpacity onPress={() => setShowPassword(false)} style={{width:'15%',alignItems:'center', borderLeftWidth:1,padding:5}}>
                         <FontAwesome5 name="eye" size={16} />
