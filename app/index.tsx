@@ -21,7 +21,7 @@ export default function Index(){
       return;
     }
     try{
-      const response = await axios.post('https://endlessly-outgoing-cowbird.ngrok-free.app/api/login',{phone,password});
+      const response = await axios.post('http://192.168.137.1/MSJ/msj-backend/public/api/login',{phone,password});
       console.log('therere',response.data);
       if(response.data.status){
         Toast.show({
@@ -136,7 +136,7 @@ export default function Index(){
                   </TouchableOpacity>
                   <View style={{flexDirection:'row', justifyContent:'center',marginTop:10}}>
                     <Text>Forgot password? </Text>
-                    <TouchableOpacity >
+                    <TouchableOpacity onPress={() => router.navigate('/forgotpassword')} >
                       <Text style={{color:'#007A5E',fontWeight:'bold'}}>Click here</Text>
                     </TouchableOpacity>
                   </View>

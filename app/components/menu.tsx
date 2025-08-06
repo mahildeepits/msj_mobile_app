@@ -144,7 +144,7 @@ export default function Menu() {
               <Text style={styles.headerText}>
                 {(segments[segments.length - 1] == 'bankdetails')? 'Bank Details' : segments[segments.length - 1]}
               </Text>
-              <TouchableOpacity onPress={() => router.back()}>
+              <TouchableOpacity onPress={() => router.navigate('/')}>
                 <Entypo name="chevron-left" size={30} style={{alignSelf:'center'}} />
               </TouchableOpacity>
             </>

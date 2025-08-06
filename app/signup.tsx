@@ -28,7 +28,7 @@ export default function Index(){
       return;
     }
     try{
-      const response = await axios.post(`https://endlessly-outgoing-cowbird.ngrok-free.app/api/register`,{
+      const response = await axios.post(`http://192.168.137.1/MSJ/msj-backend/public/api/register`,{
         phone: phone,
         password: password,
         otp: otp,

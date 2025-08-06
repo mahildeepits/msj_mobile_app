@@ -10,7 +10,7 @@ const tableData = [
   { title: 'IFSC Code', key: 'ifsc_code' },
   { title: 'Branch Name', key: 'branch_name' },
 ];
-export default function BankDetails(){
+export default function BankDetails({goldcost}:any){
   const [bankDetails, setBankDetails] = useState();
   const [addressDetails, setAddressDetails] = useState();
   const flatListData = useMemo(() => {
@@ -24,7 +24,7 @@ export default function BankDetails(){
     console.log('Fetching bank details...');
     let token = await AsyncStorage.getItem('userToken');
     token = JSON.parse(token || '{}');
-    const response = await axios.get(`https://endlessly-outgoing-cowbird.ngrok-free.app/api/bank-details`,{
+    const response = await axios.get(`http://192.168.137.1/MSJ/msj-backend/public/api/bank-details`,{
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
@@ -37,7 +37,7 @@ export default function BankDetails(){
     console.log('Fetching address details...');
     let token = await AsyncStorage.getItem('userToken');
     token = JSON.parse(token || '{}');
-    const response = await axios.get(`https://endlessly-outgoing-cowbird.ngrok-free.app/api/adress-details`,{
+    const response = await axios.get(`http://192.168.137.1/MSJ/msj-backend/public/api/adress-details`,{
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
