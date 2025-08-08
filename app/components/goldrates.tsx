@@ -9,6 +9,7 @@ export default function GoldRates({goldRate}:any){
   const [goldRate20k, setGoldRate20k] = useState(0);
   const [goldRate18k, setGoldRate18k] = useState(0);
   const [goldRate14k, setGoldRate14k] = useState(0);
+  const [currentTime, setCurrentTime] = useState(new Date());
   useEffect(() => {
     setGoldRate24k(goldRate);
     let goldCost22k = Number(getGoldRate(22, goldRate));
@@ -19,6 +20,7 @@ export default function GoldRates({goldRate}:any){
     setGoldRate20k(goldCost20k);
     setGoldRate18k(goldCost18k);
     setGoldRate14k(goldCost14k);
+    setCurrentTime(new Date());
   },[goldRate])
   const getGoldRate = (carat:any, rate24k:any) =>  {
     return ((carat / 24) * rate24k).toFixed(2);
@@ -30,10 +32,10 @@ export default function GoldRates({goldRate}:any){
       </View>
       <View style={[styles.goldRateBox, { backgroundColor: 'rgba(0,0,0,0.1)' }]}>
         <Text style={styles.goldSub}>24 K FINE GOLD (10 G)</Text>
-        <View > <RateChangeIndicator value={goldRate} showCurrenyFormat={true} showDecimals={false} styleFormat={styles.goldPrice} /></View>
+        <View > <RateChangeIndicator value={goldRate24k} showCurrenyFormat={true} showDecimals={false} styleFormat={styles.goldPrice} /></View>
         <View style={{ flexDirection: 'row', backgroundColor: '#C2DFD6', paddingHorizontal: 10, borderRadius: 2 }}>
           <Text style={styles.goldUpdates}>Last Updated:</Text>
-          <Text style={[styles.goldUpdates, { fontWeight: '500', color: 'rgb(12, 134, 12)' }]}> 11/July/2025 11:50 AM</Text>
+          <Text style={[styles.goldUpdates, { fontWeight: '500', color: 'rgb(12, 134, 12)' }]}> {currentTime.toLocaleString()} </Text>
         </View>
       </View>
       <Text style={styles.caratMainText}>All Gold Rates With Purity </Text>

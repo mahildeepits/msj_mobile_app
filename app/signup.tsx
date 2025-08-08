@@ -3,9 +3,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import axios from 'axios'
 import { ImageBackground } from 'expo-image'
 import { useRouter } from 'expo-router'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Alert, Image, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import Toast from 'react-native-toast-message'
+import config from './config'
 
 export default function Index(){
   const router = useRouter();
@@ -19,7 +20,15 @@ export default function Index(){
   const [loading, setLoading] = useState(false);
   const [isGSTEnabled, setIsGSTEnabled] = useState(false);
   const [gstNumber, setGstNumber] = useState('');
-
+  const [cities, setCities] = useState({});
+  useEffect(() => {
+    const getCities = async () => {
+      let response = await axios.get(`${config.apiBaseUrl}/cities`);
+      if(response.data.cities){
+        setCities(response.data.cities);
+      }
+    }
+  },[])
   const handleSignup = async () => {
     setLoading(true);
     if(username == '' || password == '' || phone == '' || otp == '' || confirmPassword == ''){
@@ -148,6 +157,14 @@ export default function Index(){
                   </View>
                 </View>
                 <View style={{marginBottom:20,flexDirection: 'row', alignItems: 'center',borderWidth: 1, borderRadius:5}}>
+                  <View style={{width:'15%',height:30, justifyContent: 'center',borderRightWidth:1,paddingTop:3}}>
+                    <FontAwesome name="location-arrow" size={24} style={{alignSelf:'center'}} />
+                  </View>
+                  <View style={{width:'85%'}}>
+                    <TextInput style={{width:'100%'}} placeholder='Enter your city' onChangeText={(value) => setUsername(value)} keyboardType='email-address'  />
+                  </View>
+                </View>
+                <View style={{marginBottom:20,flexDirection: 'row', alignItems: 'center',borderWidth: 1, borderRadius:5}}>
                   <View style={{width:'15%',height:30,justifyContent: 'center',borderRightWidth:1,paddingTop:3}}> 
                     <MaterialIcons name='password' size={24} style={{alignSelf:'center'}} />
                   </View>
@@ -181,32 +198,33 @@ export default function Index(){
                     )}
                   </View>
                 </View>
-                <View style={[{marginBottom:20,flexDirection: 'row', alignItems: 'center',borderWidth: 1, borderRadius:5},isGSTEnabled?{borderColor:'black'} : {borderColor:'gray'}]}>  
-                    <TouchableOpacity
-                      style={[{ width: '15%', height: 30, justifyContent: 'center', alignItems: 'center', paddingTop: 3,borderRightWidth:1 },isGSTEnabled?{borderColor:'black'} : {borderColor:'gray'}]}
-                      onPress={() => {
-                        if(isGSTEnabled) setGstNumber('');
-                        setIsGSTEnabled(!isGSTEnabled)
-                      }}
-                    >
-                      {isGSTEnabled ? (
-                        <FontAwesome name="check-square" size={22} color="rgba(0,50,255,1)" />
-                      ) : (
-                        <FontAwesome name="square-o" size={22} color="black" />
-                      )}
-                    </TouchableOpacity>
-                    <View style={{width:'85%',flexDirection:'row', alignItems: 'center'}}>
-                        <TextInput
-                          style={{ width: '100%', color: isGSTEnabled ? undefined : 'gray' }}
-                          placeholder='GST Number (Optional)'
-                          value={gstNumber}
-                          onChangeText={setGstNumber}
-                          editable={isGSTEnabled}
-                          keyboardType='default'
-                          placeholderTextColor={isGSTEnabled ? 'black' : 'gray'}
-                        />
-                    </View>
-                </View>
+                {/* <View style={[{marginBottom:20,flexDirection: 'row', alignItems: 'center',borderWidth: 1, borderRadius:5},isGSTEnabled?{borderColor:'black'} : {borderColor:'gray'}]}>  
+                  <TouchableOpacity
+                    style={[{ width: '15%', height: 30, justifyContent: 'center', alignItems: 'center', paddingTop: 3,borderRightWidth:1 },isGSTEnabled?{borderColor:'black'} : {borderColor:'gray'}]}
+                    onPress={() => {
+                      if(isGSTEnabled) setGstNumber('');
+                      setIsGSTEnabled(!isGSTEnabled)
+                    }}
+                  >
+                    {isGSTEnabled ? (
+                      <FontAwesome name="check-square" size={22} color="rgba(0,50,255,1)" />
+                    ) : (
+                      <FontAwesome name="square-o" size={22} color="black" />
+                    )}
+                  </TouchableOpacity>
+                  <View style={{width:'85%',flexDirection:'row', alignItems: 'center'}}>
+                      <TextInput
+                        style={{ width: '100%', color: isGSTEnabled ? undefined : 'gray' }}
+                        placeholder='GST Number (Optional)'
+                        value={gstNumber}
+                        onChangeText={setGstNumber}
+                        editable={isGSTEnabled}
+                        keyboardType='default'
+                        placeholderTextColor={isGSTEnabled ? 'black' : 'gray'}
+                      />
+                  </View>
+                </View> */}
+                
                 <View style={{paddingBottom:10,borderBottomColor:'rgba(0,0,0,0.3)'}}>
                   <TouchableOpacity style={{backgroundColor:'white',padding:10,borderRadius:5,borderWidth:2,borderColor:'#C2DFD6'}} disabled={loading} onPress={() => handleSignup()}  >
                     <Text style={[{textAlign:'center',fontWeight:'bold',fontSize:14},(loading? {color:'rgba(0,0,0,0.5)'} : {})]}>{loading? 'Loading...' : 'SIGN UP'}</Text>
