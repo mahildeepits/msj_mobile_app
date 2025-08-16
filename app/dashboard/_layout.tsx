@@ -41,7 +41,7 @@ export default function DashboardLayout({navigation}:any) {
   return (
     <GoldCostContext.Provider value={rates?.rates?.goldCost}>
 
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, marginTop:40, backgroundColor: 'white' }}>
       {user && <Menu />}
       <Slot /> {/* Renders the current active screen */}
       {user && <BottomNavigation navigation={navigation}/>}

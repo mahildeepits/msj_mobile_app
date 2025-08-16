@@ -52,6 +52,7 @@ export default function Menu() {
   };
 
   const handleLogout = () => {
+    console.log('herree');
     setMenuOpen(false);
 
     Alert.alert(
@@ -98,7 +99,7 @@ export default function Menu() {
       {/* Side Drawer */}
       <Animated.View style={[styles.drawer, { transform: [{ translateX: slideAnim }] }]}>
         <View style={styles.drawerContent}>
-          <View style={{flexDirection: 'row', justifyContent:'space-between', alignItems: 'center',padding:20}}>
+          <View style={{flexDirection: 'row', justifyContent:'space-between', alignItems: 'center',paddingHorizontal:20}}>
             {/* Logo */}
             <Image 
               source={require('../../assets/images/logo.png')} // Replace with your logo path
@@ -137,14 +138,14 @@ export default function Menu() {
       <View style={[styles.header, (!isDashboard) ? styles.menuShadow : {}]}>
         <View style={styles.container}>
           <TouchableOpacity onPress={toggleMenu}>
-            <Entypo name="menu" size={30} />
+            <Entypo name="menu" size={30} color={isDashboard ? 'white' : 'black'}/>
           </TouchableOpacity>
           {!isDashboard && (
             <>
               <Text style={styles.headerText}>
                 {(segments[segments.length - 1] == 'bankdetails')? 'Bank Details' : segments[segments.length - 1]}
               </Text>
-              <TouchableOpacity onPress={() => router.navigate('/')}>
+              <TouchableOpacity onPress={() => router.navigate('/dashboard')}>
                 <Entypo name="chevron-left" size={30} style={{alignSelf:'center'}} />
               </TouchableOpacity>
             </>
@@ -162,7 +163,7 @@ const styles = StyleSheet.create({
     left: 0,
     zIndex: 9999,
     width: '100%',
-    paddingTop: 40,
+    paddingTop: 10,
     paddingBottom: 5,
   },
   menuShadow: {
@@ -171,6 +172,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    backgroundColor:'#C2DFD6'
   },
   headerText: {
     fontSize: 18,
@@ -187,7 +189,8 @@ const styles = StyleSheet.create({
   },
   drawer: {
     position: 'absolute',
-    top: 0,
+    bottom: 0,
+    top:0,
     left: 0,
     width: Dimensions.get('window').width * 0.75,
     height: '100%',

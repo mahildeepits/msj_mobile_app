@@ -21,6 +21,8 @@ export default function Index(){
   const [isGSTEnabled, setIsGSTEnabled] = useState(false);
   const [gstNumber, setGstNumber] = useState('');
   const [cities, setCities] = useState({});
+  const [city,setCity] = useState('');
+  const [verifyLoading, setVerifyLoading] = useState(false);
   useEffect(() => {
     const getCities = async () => {
       let response = await axios.get(`${config.apiBaseUrl}/cities`);
@@ -37,7 +39,7 @@ export default function Index(){
       return;
     }
     try{
-      const response = await axios.post(`http://192.168.137.1/MSJ/msj-backend/public/api/register`,{
+      const response = await axios.post(`${config.apiBaseUrl}/register`,{
         phone: phone,
         password: password,
         otp: otp,
@@ -45,23 +47,30 @@ export default function Index(){
         confirm_password: confirmPassword,
         is_gst_enabled: isGSTEnabled,
         gst_number: gstNumber,
+        city: city
       });
-      console.log('therere',response.data);
-      if(response.data.status){
-        Toast.show({
-          type: "success",
-          text1: response.data.message,
-          text2: 'Redirecting to dashboard...',
-          position: "top",
-          visibilityTime: 2000,
-        });
-        // Navigate to the home screen or any other screen
+      let res = successHandler(response);
+      if(res){
         await AsyncStorage.setItem('userToken', JSON.stringify(response.data.token));
         await AsyncStorage.setItem('user', JSON.stringify(response.data.user));
         setTimeout(() => {
           setLoading(false);
           router.navigate('/dashboard');
         }, 2000);
+      }
+    }catch(error){
+      errorHandler(error);
+    }
+  }
+  const successHandler = (response:any) => {
+      if(response.data.status){
+        setLoading(false);
+        Toast.show({
+          type: "success",
+          text1: response.data.message,
+          position: "top",
+        });
+        return true;
       }else{
         setLoading(false);
         Toast.show({
@@ -71,9 +80,10 @@ export default function Index(){
           position: "top",
           visibilityTime: 5000,
         });
+        return false;
       }
-      
-    }catch(error){
+    }
+    const errorHandler = (error:any) => {
       setLoading(false);
       let message = "Something went wrong. Please try again.";
       if (error?.response?.data?.message) {
@@ -100,7 +110,20 @@ export default function Index(){
         position: "top",
         visibilityTime: 5000,
       });
-      console.log('here',message);
+      console.log('here',message,error?.response.data);
+    }
+  const handleSendOtp = async () => {
+    setVerifyLoading(true)
+    try {
+      const response = await axios.post(`${config.apiBaseUrl}/otp/send`, { phone, user_verifications:false });
+      let success = successHandler(response);
+      if(success){
+        setVerifyLoading(false);
+      }
+
+    }catch(error){
+      setVerifyLoading(false);
+      errorHandler(error);
     }
   }
   return (
@@ -143,7 +166,7 @@ export default function Index(){
                   </View>
                   <View style={{width:'85%',flexDirection:'row', alignItems: 'center'}}>
                     <TextInput style={{width:'75%'}} placeholder='Enter your Mobile Number' onChangeText={(value) => setPhone(value)} keyboardType={'number-pad'}  />
-                    <TouchableOpacity onPress={() => console.log('VERIFY CLICKED')} style={{width:'25%',alignItems:'center',borderLeftWidth:1,padding:5}}>
+                    <TouchableOpacity disabled={verifyLoading} onPress={() => handleSendOtp()} style={{width:'25%',alignItems:'center',borderLeftWidth:1,padding:5}}>
                       <Text style={{fontSize:14,fontWeight:'bold'}}>Verify</Text>
                     </TouchableOpacity>
                   </View>
@@ -161,7 +184,7 @@ export default function Index(){
                     <FontAwesome name="location-arrow" size={24} style={{alignSelf:'center'}} />
                   </View>
                   <View style={{width:'85%'}}>
-                    <TextInput style={{width:'100%'}} placeholder='Enter your city' onChangeText={(value) => setUsername(value)} keyboardType='email-address'  />
+                    <TextInput style={{width:'100%'}} placeholder='Enter your city' onChangeText={(value) => setCity(value)} keyboardType='email-address'  />
                   </View>
                 </View>
                 <View style={{marginBottom:20,flexDirection: 'row', alignItems: 'center',borderWidth: 1, borderRadius:5}}>

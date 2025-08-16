@@ -3,10 +3,16 @@ import { Dimensions, FlatList, Image, ImageBackground, StyleSheet, View } from '
 const { width } = Dimensions.get("window");
 
 const images = [
-  require("../../assets/images/bg-image.jpg"),
-  require("../../assets/images/bg-image1.jpg"),
-  require("../../assets/images/bg-image2.jpg"),
-  require("../../assets/images/bg-image3.jpg"),
+  // require("../../assets/images/slider/1.jpg"),
+  // require("../../assets/images/slider/2.jpg"),
+  // require("../../assets/images/slider/3.jpg"),
+  // require("../../assets/images/slider/4.jpg"),
+  // require("../../assets/images/slider/5.jpg"),
+  require("../../assets/images/slider/6.jpg"),
+  require("../../assets/images/slider/7.jpg"),
+  require("../../assets/images/slider/8.jpg"),
+  require("../../assets/images/slider/9.jpg"),
+  require("../../assets/images/slider/10.jpg"),
 ];
 
 export default function Slider(){
@@ -58,7 +64,7 @@ useEffect(() => {
         
         {/* Static Logo */}
         <View style={styles.logoContainer}>
-          <Image source={require("../../assets/images/logo.png")} style={styles.logo} />
+          <Image source={require("../../assets/images/logo2.png")} style={styles.logo} />
         </View>
       </View>
   )
@@ -104,6 +110,7 @@ slider: {
   },
   logo: {
     width: 180,
+    height: 80,
     resizeMode: "contain",
   },
 });

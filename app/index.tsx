@@ -6,7 +6,7 @@ import { useRouter } from 'expo-router'
 import React, { useState } from 'react'
 import { Alert, Image, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import Toast from 'react-native-toast-message'
-
+import config from './config'
 export default function Index(){
   const router = useRouter();
   const [phone, setPhone] = useState('');
@@ -21,7 +21,7 @@ export default function Index(){
       return;
     }
     try{
-      const response = await axios.post('http://192.168.137.1/MSJ/msj-backend/public/api/login',{phone,password});
+      const response = await axios.post(`${config.apiBaseUrl}/login`,{phone,password});
       console.log('therere',response.data);
       if(response.data.status){
         Toast.show({

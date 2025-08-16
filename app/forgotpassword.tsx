@@ -1,11 +1,13 @@
 import { Entypo, FontAwesome } from '@expo/vector-icons';
 import axios from 'axios';
+import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Image, ImageBackground, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Modal from 'react-native-modal';
 import Toast from 'react-native-toast-message';
+import config from './config';
 
-export default function ForgotPasswordScreen({ router }:any) {
+export default function ForgotPasswordScreen() {
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [otpVisible, setOtpVisible] = useState(false);
@@ -14,6 +16,7 @@ export default function ForgotPasswordScreen({ router }:any) {
   const otpInputs = useRef([]);
   const RESEND_OTP_TIME_LIMIT = 60; // 1 minute in seconds
   const [resendTimer, setResendTimer] = useState(0);
+  const router = useRouter();
   //...
   const [resendDisabled, setResendDisabled] = useState(false);
 
@@ -50,7 +53,7 @@ export default function ForgotPasswordScreen({ router }:any) {
   };
   const sendOtpAndVerifyUser = async () => {
     try {
-      const response = await axios.post('http://192.168.137.1/MSJ/msj-backend/public/api/otp/send', { phone });
+      const response = await axios.post(`${config.apiBaseUrl}/otp/send`, { phone });
       let success = successHandler(response);
       if(success){
         setOtpVisible(true);
@@ -122,11 +125,13 @@ export default function ForgotPasswordScreen({ router }:any) {
       return;
     }
     try {
-      const response = await axios.post('http://192.168.137.1/MSJ/msj-backend/public/api/otp/verify', { otp:enteredOtp,phone });
+      const response = await axios.post(`${config.apiBaseUrl}/otp/verify`, { otp:enteredOtp,phone });
       let success:any = successHandler(response);
       if(success){
-        handleModelClose();
-        router.navigate('/resetpassword');
+        setTimeout(() => {
+          handleModelClose();
+          router.navigate(`/resetpassword?user_phone=${phone}`);
+        }, 2000);
       }
     }catch(error){
       errorHandler(error);

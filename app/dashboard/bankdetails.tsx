@@ -2,7 +2,8 @@ import { Entypo, FontAwesome5 } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import React, { useEffect, useMemo, useState } from 'react';
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
+import config from '../config';
 const tableData = [
   { title: 'Bank Name', key: 'bank_name' },
   { title: 'Account Name', key: 'account_name' },
@@ -24,7 +25,7 @@ export default function BankDetails({goldcost}:any){
     console.log('Fetching bank details...');
     let token = await AsyncStorage.getItem('userToken');
     token = JSON.parse(token || '{}');
-    const response = await axios.get(`http://192.168.137.1/MSJ/msj-backend/public/api/bank-details`,{
+    const response = await axios.get(`${config.apiBaseUrl}/bank-details`,{
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
@@ -37,7 +38,7 @@ export default function BankDetails({goldcost}:any){
     console.log('Fetching address details...');
     let token = await AsyncStorage.getItem('userToken');
     token = JSON.parse(token || '{}');
-    const response = await axios.get(`http://192.168.137.1/MSJ/msj-backend/public/api/adress-details`,{
+    const response = await axios.get(`${config.apiBaseUrl}/adress-details`,{
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
@@ -51,7 +52,7 @@ export default function BankDetails({goldcost}:any){
     getAddressDetails();
   }, []);
   return (
-    <View style={{flex: 1,backgroundColor:'#C2DFD6',paddingTop:75}}>
+    <View style={{flex: 1,backgroundColor:'#C2DFD6',paddingTop:45}}>
       <View>
         {/* Bank details */}
         <View style={{ }}>
@@ -88,21 +89,21 @@ export default function BankDetails({goldcost}:any){
         {/* follow us */}
         {/* <Text style={{fontSize:16,fontWeight:'bold',marginTop:10,paddingVertical:5,alignSelf:'center',borderBottomWidth:1}}>FOLLOW US ON</Text> */}
         <View style={{flexDirection:'row',gap:10,justifyContent:'center',alignItems:'center',paddingVertical:5}}>
-          <TouchableOpacity
+          <View
             style={styles.directionsButton}
           >
             <Image source={require('../../assets/images/instagram.png')} style={styles.image} />
-          </TouchableOpacity>
-          <TouchableOpacity
+          </View>
+          <View
             style={styles.directionsButton}
           >
             <Image source={require('../../assets/images/whatsapp.png')} style={styles.image} />
-          </TouchableOpacity>
-          <TouchableOpacity
+          </View>
+          <View
             style={styles.directionsButton}
           >
             <Image source={require('../../assets/images/facebook.png')} style={styles.image} />
-          </TouchableOpacity>
+          </View>
         </View>
         {/* Logo */}
         
