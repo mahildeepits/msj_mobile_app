@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "56308153956",
+    "project_id": "msj-jewellers",
+    "storage_bucket": "msj-jewellers.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:56308153956:android:d0d6339f8c98194f6b2971",
+        "android_client_info": {
+          "package_name": "com.infotech.msj_mobile_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7FJ9-qVuZtRBYd8qw2SsesWbEWQSEi4I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

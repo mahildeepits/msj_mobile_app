@@ -1,5 +1,8 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import { Dimensions, FlatList, Image, ImageBackground, StyleSheet, View } from 'react-native';
+import config from '../config';
 const { width } = Dimensions.get("window");
 
 const images = [
@@ -16,9 +19,9 @@ const images = [
 ];
 
 export default function Slider(){
-    const sliderRef = useRef<FlatList>(null);
+  const sliderRef = useRef<FlatList>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-useEffect(() => {
+  useEffect(() => {
     const interval = setInterval(() => {
       const nextIndex = (currentIndex + 1) % images.length;
       sliderRef.current?.scrollToIndex({ index: nextIndex, animated: true });
@@ -26,6 +29,20 @@ useEffect(() => {
     }, 5000);
     return () => clearInterval(interval);
   }, [currentIndex]);
+  useEffect(() => {
+    const getOffers = async () => {
+      let token = await AsyncStorage.getItem('userToken');
+      token = JSON.parse(token || '{}');
+      let response = await axios.get(`${config.apiBaseUrl}/offers`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      console.log(response.data.data);
+    }
+    getOffers();
+  },[]);
   return (
     <View style={{ height: 250 }}>
         
