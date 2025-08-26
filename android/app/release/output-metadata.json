@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.anonymous.msj_mobile_app",
+  "applicationId": "com.infotech.msj_mobile_app",
   "variantName": "release",
   "elements": [
     {

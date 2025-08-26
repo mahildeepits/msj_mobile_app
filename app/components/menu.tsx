@@ -1,4 +1,4 @@
-import { Entypo } from '@expo/vector-icons';
+import { Entypo, FontAwesome } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter, useSegments } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -99,7 +99,7 @@ export default function Menu() {
       {/* Side Drawer */}
       <Animated.View style={[styles.drawer, { transform: [{ translateX: slideAnim }] }]}>
         <View style={styles.drawerContent}>
-          <View style={{flexDirection: 'row', justifyContent:'space-between', alignItems: 'center',paddingHorizontal:20}}>
+          <View style={{flexDirection: 'row', justifyContent:'space-between', alignItems: 'center',paddingHorizontal:20,paddingVertical:10,borderBottomWidth:1,borderBottomColor:'#f0f0f0'}}>
             {/* Logo */}
             <Image 
               source={require('../../assets/images/logo.png')} // Replace with your logo path
@@ -112,13 +112,13 @@ export default function Menu() {
           </View>
           
           {/* Menu Items */}
-          {/* <TouchableOpacity 
+          <TouchableOpacity 
             style={[styles.menuItem,(segments[segments.length - 1] == 'profile')? {backgroundColor:'white'} : {}]}
-            onPress={() => navigateTo('/profile')}
+            onPress={() => navigateTo('/dashboard/profile')}
           >
             <FontAwesome name="user-circle" size={18} color="#333" />
-            <Text style={styles.menuText}>{user?.name || 'Profile'}</Text>
-          </TouchableOpacity> */}
+            <Text style={styles.menuText}>Profile</Text>
+          </TouchableOpacity>
           
           {/* Add more menu items as needed */}
           
@@ -135,7 +135,7 @@ export default function Menu() {
       </Animated.View>
       
       {/* Header */}
-      <View style={[styles.header, (!isDashboard) ? styles.menuShadow : {}]}>
+      <View style={[styles.header,, (!isDashboard) ? styles.menuShadow : {}]}>
         <View style={styles.container}>
           <TouchableOpacity onPress={toggleMenu}>
             <Entypo name="menu" size={30} color={isDashboard ? 'white' : 'black'}/>
@@ -196,7 +196,6 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: '#C2DFD6',
     zIndex: 10000,
-    paddingTop: 30,
   },
   drawerContent: {
     // padding: 20,

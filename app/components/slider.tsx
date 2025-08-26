@@ -21,6 +21,7 @@ const images = [
 export default function Slider(){
   const sliderRef = useRef<FlatList>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [sliderImages,setSliderImages] = useState(images);
   useEffect(() => {
     const interval = setInterval(() => {
       const nextIndex = (currentIndex + 1) % images.length;
@@ -39,7 +40,10 @@ export default function Slider(){
           'Authorization': `Bearer ${token}`
         }
       });
-      console.log(response.data.data);
+      if(response.data.status){
+        const newImages = response.data.data.map((element:any) => ({ uri: element.image_path }));
+        setSliderImages(prevSliderImages => [...newImages, ...prevSliderImages]);
+      }
     }
     getOffers();
   },[]);
@@ -50,7 +54,7 @@ export default function Slider(){
         {/* Background slider */}
         <FlatList
             ref={sliderRef}
-            data={images}
+            data={sliderImages}
             horizontal
             pagingEnabled
             scrollEnabled={true} // <- allow manual swipe
@@ -71,7 +75,7 @@ export default function Slider(){
         
         {/* Dot Indicators */}
         <View style={styles.dotContainer}>
-          {images.map((_, index) => (
+          {sliderImages.map((_, index) => (
             <View
               key={index}
               style={[styles.dot, currentIndex === index && styles.activeDot]}
