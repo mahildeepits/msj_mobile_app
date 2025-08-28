@@ -119,6 +119,13 @@ export default function Menu() {
             <FontAwesome name="user-circle" size={18} color="#333" />
             <Text style={styles.menuText}>Profile</Text>
           </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.menuItem,(segments[segments.length - 1] == 'products')? {backgroundColor:'white'} : {}]}
+            onPress={() => navigateTo('/dashboard/products')}
+          >
+            <FontAwesome name="gift" size={18} color="#333" />
+            <Text style={styles.menuText}>Products</Text>
+          </TouchableOpacity>
           
           {/* Add more menu items as needed */}
           
@@ -135,7 +142,7 @@ export default function Menu() {
       </Animated.View>
       
       {/* Header */}
-      <View style={[styles.header,, (!isDashboard) ? styles.menuShadow : {}]}>
+      <View style={[styles.header, (!isDashboard) ? styles.menuShadow : {}]}>
         <View style={styles.container}>
           <TouchableOpacity onPress={toggleMenu}>
             <Entypo name="menu" size={30} color={isDashboard ? 'white' : 'black'}/>
