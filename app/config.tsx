@@ -3,14 +3,16 @@
  */
 const config = {
   // WebSocket URL for real-time data
-  // LiveSocketURL: 'wss://hbrsocket.hbrgold.com/',
-  LiveSocketURL: 'http://69.62.82.235:3001',
+  LiveSocketURL: 'wss://hbrsocket.hbrgold.com/',
+  // LiveSocketURL: 'http://69.62.82.235:3001',
 
   // API base URL (placeholder - update with actual API URL if needed)
   // ApiBaseURL: process.env.REACT_APP_API_URL || 'https://api.hbrgold.com/',
-  apiBaseUrl: process.env.REACT_APP_API_BASE_URL || "http://192.168.137.1/MSJ/msj-backend/public/api",
-  // apiBaseUrl: process.env.REACT_APP_API_BASE_URL || "https://msjapp.hsdreamworld.com/api",
+  // apiBaseUrl: process.env.REACT_APP_API_BASE_URL || "http://192.168.137.1/MSJ/msj-backend/public/api",
+  apiBaseUrl: process.env.REACT_APP_API_BASE_URL || "https://msjapp.hsdreamworld.com/api",
   // Default request timeout in milliseconds
+  // videoBaseUrl: process.env.REACT_APP_VIDEO_BASE_URL || "http://192.168.137.1/MSJ/msj-backend/public/video/msj-video.mp4",
+  videoBaseUrl: process.env.REACT_APP_VIDEO_BASE_URL || "https://msjapp.hsdreamworld.com/video/msj-video.mp4",
   RequestTimeout: 30000,
 };
 
