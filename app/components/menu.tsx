@@ -4,6 +4,8 @@ import { useRouter, useSegments } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, Animated, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-toast-message';
+import { useNotifications } from '../dashboard/notificationContext';
+
 
 export default function Menu() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -11,6 +13,7 @@ export default function Menu() {
   const segments = useSegments();
   const router = useRouter();
   const [user, setUser] = useState(null);
+  const { hasUnread } = useNotifications();
   
   // Animation values
   const slideAnim = React.useRef(new Animated.Value(-Dimensions.get('window').width)).current;
@@ -126,7 +129,14 @@ export default function Menu() {
             <FontAwesome name="gift" size={18} color="#333" />
             <Text style={styles.menuText}>Products</Text>
           </TouchableOpacity>
-          
+          <TouchableOpacity 
+            style={[styles.menuItem, (segments[segments.length - 1] == 'notifications') ? { backgroundColor:'white' } : {}]}
+            onPress={() => navigateTo('/dashboard/notifications')}
+          >
+            <Entypo name="bell" size={18} color="#333" />
+            <Text style={styles.menuText}>Notifications</Text>
+            {hasUnread && <View style={styles.redDot} />}
+          </TouchableOpacity>
           {/* Add more menu items as needed */}
           
         </View>
@@ -144,8 +154,9 @@ export default function Menu() {
       {/* Header */}
       <View style={[styles.header, (!isDashboard) ? styles.menuShadow : {}]}>
         <View style={styles.container}>
-          <TouchableOpacity onPress={toggleMenu}>
+          <TouchableOpacity onPress={toggleMenu} style={{ position: 'relative' }}>
             <Entypo name="menu" size={30} color={isDashboard ? 'white' : 'black'}/>
+            {hasUnread && <View style={styles.topbarRedDot} />}
           </TouchableOpacity>
           {!isDashboard && (
             <>
@@ -248,5 +259,25 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
     fontWeight: 'bold',
-  }
+  },
+  redDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: 'red',
+    marginLeft: 6,
+    alignSelf: 'center',
+  },
+  topbarRedDot: {
+    position: 'absolute',
+    top: 3,
+    right: 3,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: 'red',
+    borderWidth: 1,
+    borderColor: 'white', // optional, to create a white border around red dot for better visibility
+    zIndex: 10,
+  },
 });
