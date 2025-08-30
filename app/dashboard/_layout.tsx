@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { Alert, BackHandler, PermissionsAndroid, View } from "react-native";
 import Toast from "react-native-toast-message";
 import config from "../config";
+import { FestivalLayoutComponents } from "../FestivalLayoutComponents";
 import { useRatesStore } from "../ratesStore";
 import { socketService } from "../socketService";
 import BottomNavigation from "./../components/bottomNavigation";
@@ -23,6 +24,8 @@ export default function DashboardLayout({navigation}:any) {
   const [routeName, setRouteName] = useState('');
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
   const projectId = Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
+  const LayoutComponent = FestivalLayoutComponents['Diwali'] || FestivalLayoutComponents.Default;
+
   useEffect(() => {
     const current:any = segments[segments.length - 1];
     if (current === undefined || current === 'index') {
@@ -192,6 +195,7 @@ export default function DashboardLayout({navigation}:any) {
     BackHandler.addEventListener('hardwareBackPress', onBackPress);
   }, []);
   return (
+    <LayoutComponent>
     <GoldCostContext.Provider value={rates?.rates?.goldCost}>
       <NotificationsProvider>
         <View style={{ flex: 1, marginTop:40, backgroundColor: 'white' }}>
@@ -201,6 +205,6 @@ export default function DashboardLayout({navigation}:any) {
           <Toast />
         </View>
       </NotificationsProvider>
-    </GoldCostContext.Provider>
+    </LayoutComponent>
   );
 }

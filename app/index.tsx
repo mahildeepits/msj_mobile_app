@@ -22,7 +22,7 @@ export default function Index(){
     }
     try{
       const response = await axios.post(`${config.apiBaseUrl}/login`,{phone,password});
-      console.log('therere',response.data);
+      console.log('therere',response);
       if(response.data.status){
         Toast.show({
           type: "success",
@@ -76,7 +76,7 @@ export default function Index(){
         position: "top",
         visibilityTime: 5000,
       });
-      console.log('here',message,error?.response.data);
+      console.log('here',message,error);
     }
   }
   return (
