@@ -13,6 +13,7 @@ import { socketService } from "../socketService";
 import BottomNavigation from "./../components/bottomNavigation";
 import Menu from "./../components/menu";
 import GoldCostContext from "./goldContext";
+import { NotificationsProvider } from "./notificationContext";
 
 
 export default function DashboardLayout({navigation}:any) {
@@ -21,6 +22,7 @@ export default function DashboardLayout({navigation}:any) {
   const rates:any = useRatesStore((state) => state.rates);
   const segments = useSegments(); 
   const [routeName, setRouteName] = useState('');
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
   const projectId = Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
   const LayoutComponent = FestivalLayoutComponents['Diwali'] || FestivalLayoutComponents.Default;
 
@@ -83,6 +85,66 @@ export default function DashboardLayout({navigation}:any) {
     });
     return unsubscribe;
   }, []);
+  useEffect(() => {
+    const checkUnreadNotifications = async () => {
+      try {
+        let userToken = await AsyncStorage.getItem('userToken');
+        userToken = JSON.parse(userToken || '{}');
+
+        const response = await axios.get(`${config.apiBaseUrl}/notifications`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${userToken}`,
+          }
+        });
+
+        const notifications = response.data.data || [];
+        let userJson = await AsyncStorage.getItem('user');
+        const user = userJson ? JSON.parse(userJson) : null;
+
+        if (user) {
+          const hasUnread = notifications.some(
+            (notif: any) => !notif.seen_by?.includes(user.id)
+          );
+          setHasUnreadNotifications(hasUnread);
+        } else {
+          setHasUnreadNotifications(false);
+        }
+      } catch (error) {
+        console.log('Error checking unread notifications:', error);
+        setHasUnreadNotifications(false);
+      }
+    }
+    checkUnreadNotifications();
+  }, [user]);
+  const refreshUnreadNotifications = async () => {
+  try {
+    let userToken = await AsyncStorage.getItem('userToken');
+    userToken = JSON.parse(userToken || '{}');
+    const response = await axios.get(`${config.apiBaseUrl}/notifications`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${userToken}`,
+      }
+    });
+
+    const notifications = response.data.data || [];
+    let userJson = await AsyncStorage.getItem('user');
+    const user = userJson ? JSON.parse(userJson) : null;
+
+    if (user) {
+      const hasUnread = notifications.some(
+        (notif: any) => !notif.seen_by?.includes(user.id)
+      );
+      setHasUnreadNotifications(hasUnread);
+    } else {
+      setHasUnreadNotifications(false);
+    }
+  } catch (error) {
+    console.log('Error refreshing unread notifications:', error);
+    setHasUnreadNotifications(false);
+  }
+};
   const sendToken = async (token:any) => {
     await AsyncStorage.setItem('pushToken', JSON.stringify(token));
     let apiToken = await AsyncStorage.getItem('userToken');
@@ -134,15 +196,15 @@ export default function DashboardLayout({navigation}:any) {
   }, []);
   return (
     <LayoutComponent>
-      <GoldCostContext.Provider value={rates?.rates?.goldCost}>
-
-      <View style={{ flex: 1, marginTop:40, backgroundColor: 'white' }}>
-        {user && <Menu />}
-        <Slot /> {/* Renders the current active screen */}
-        {user && <BottomNavigation navigation={navigation}/>}
-        <Toast />
-      </View>
-      </GoldCostContext.Provider>
+    <GoldCostContext.Provider value={rates?.rates?.goldCost}>
+      <NotificationsProvider>
+        <View style={{ flex: 1, marginTop:40, backgroundColor: 'white' }}>
+          {user && <Menu />}
+          <Slot /> {/* Renders the current active screen */}
+          {user && <BottomNavigation navigation={navigation}/>}
+          <Toast />
+        </View>
+      </NotificationsProvider>
     </LayoutComponent>
   );
 }

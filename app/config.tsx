@@ -11,6 +11,8 @@ const config = {
   // apiBaseUrl: process.env.REACT_APP_API_BASE_URL || "http://192.168.137.1/MSJ/msj-backend/public/api",
   apiBaseUrl: process.env.REACT_APP_API_BASE_URL || "https://msjapp.hsdreamworld.com/api",
   // Default request timeout in milliseconds
+  // videoBaseUrl: process.env.REACT_APP_VIDEO_BASE_URL || "http://192.168.137.1/MSJ/msj-backend/public/video/msj-video.mp4",
+  videoBaseUrl: process.env.REACT_APP_VIDEO_BASE_URL || "https://msjapp.hsdreamworld.com/video/msj-video.mp4",
   RequestTimeout: 30000,
 };
 

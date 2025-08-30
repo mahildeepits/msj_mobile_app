@@ -5,6 +5,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import { RateChangeIndicator } from '../components/RateChangeIndicator';
+import VideoComponent from '../components/video';
 import config from '../config';
 import GoldCostContext from './goldContext';
 
@@ -235,6 +236,7 @@ export default function CalculatorScreen(){
               </View>
             </View>
           </View>
+          <VideoComponent />
         </View>
       </ScrollView>
     </TouchableWithoutFeedback>
