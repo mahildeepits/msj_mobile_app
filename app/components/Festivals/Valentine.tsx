@@ -18,14 +18,14 @@ export default function ValentineLayout({children}: React.PropsWithChildren<{}>)
                     style={{ flex: 1, opacity: 0.7, width: wp(50), height: hp(50) }}
                 />
             </View>
-            <LinearGradient
+            {/* <LinearGradient
                 colors={["#4760EB", "#2C3EEB", "#08078A"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.container}
-            >
+            > */}
                 {children}
-            </LinearGradient>
+            {/* </LinearGradient> */}
         </>
     )
 }

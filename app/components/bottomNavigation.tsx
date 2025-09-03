@@ -31,11 +31,11 @@ export default function BottomNavigation({navigation}: any) {
                 <Ionicons name="business-outline" size={22} style={[routeName === 'bankdetails'? styles.active : styles.inactive]}/>
                 <Text style={[styles.navLabel,routeName === 'bankdetails'? styles.active : styles.inactive]}>Bank Details</Text>
             </TouchableOpacity>
-            {/* <TouchableOpacity style={styles.navItem} onPress={() => handleRouting('/bankdetails')}>
-                <Ionicons name="business-outline" size={22} style={[routeName === 'bankdetails'? styles.active : styles.inactive]}/>
-                <Text style={[styles.navLabel,routeName === 'bankdetails'? styles.active : styles.inactive]}>Bank Details</Text>
+            <TouchableOpacity style={styles.navItem} onPress={() => handleRouting('/dashboard/products')}>
+                <Ionicons name="gift-sharp" size={22} style={[routeName === 'products'? styles.active : styles.inactive]}/>
+                <Text style={[styles.navLabel,routeName === 'products'? styles.active : styles.inactive]}>Products</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.navItem} onPress={() => handleRouting('/bankdetails')}>
+            {/* <TouchableOpacity style={styles.navItem} onPress={() => handleRouting('/bankdetails')}>
                 <Ionicons name="business-outline" size={22} style={[routeName === 'bankdetails'? styles.active : styles.inactive]}/>
                 <Text style={[styles.navLabel,routeName === 'bankdetails'? styles.active : styles.inactive]}>Bank Details</Text>
             </TouchableOpacity> */}
@@ -53,10 +53,12 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,1)",
     paddingTop: 10,
     paddingBottom: 5,
+    gap:15
   },
   navItem: {
     alignItems: "center",
-    width:'33%',
+    width:'20%',
+    zIndex: 2,
   },
   navLabel: {
     fontSize: 12,

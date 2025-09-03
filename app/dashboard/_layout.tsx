@@ -7,7 +7,6 @@ import { useEffect, useRef, useState } from "react";
 import { Alert, BackHandler, PermissionsAndroid, View } from "react-native";
 import Toast from "react-native-toast-message";
 import config from "../config";
-import { FestivalLayoutComponents } from "../FestivalLayoutComponents";
 import { useRatesStore } from "../ratesStore";
 import { socketService } from "../socketService";
 import BottomNavigation from "./../components/bottomNavigation";
@@ -15,42 +14,76 @@ import Menu from "./../components/menu";
 import GoldCostContext from "./goldContext";
 import { NotificationsProvider } from "./notificationContext";
 
-
-export default function DashboardLayout({navigation}:any) {
+export default function DashboardLayout({ navigation }: any) {
   const router = useRouter();
   const [user, setUser] = useState(null);
-  const rates:any = useRatesStore((state) => state.rates);
+  const rates: any = useRatesStore((state) => state.rates);
   const segments = useSegments(); 
   const [routeName, setRouteName] = useState('');
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
   const projectId = Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
-  const LayoutComponent = FestivalLayoutComponents['Diwali'] || FestivalLayoutComponents.Default;
+
+  const lastBackPress = useRef<number | null>(null);
+
+  // Double-back-to-exit handling
+  useEffect(() => {
+    const onBackPress = () => {
+      const current = segments[segments.length - 1];
+      console.log(current);
+      // Only apply double back exit logic on /dashboard/index
+      if (!current || current === 'dashboard') {
+        const now = Date.now();
+        if (lastBackPress.current && now - lastBackPress.current < 2000) {
+          BackHandler.exitApp();
+          return true;
+        } else {
+          Toast.show({
+            type: 'info',
+            text1: 'Press again to exit',
+            position: 'top',
+            visibilityTime: 2000,
+          });
+          lastBackPress.current = now;
+          return true;
+        }
+      }
+      // Not on main screen: let Expo Router handle it (navigate back or pop stack)
+      return false;
+    };
+
+    const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+    return () => subscription.remove();
+  }, [segments]);
 
   useEffect(() => {
-    const current:any = segments[segments.length - 1];
+    const current: any = segments[segments.length - 1];
     if (current === undefined || current === 'index') {
       setRouteName('index');
     } else {
       setRouteName(current);
     }
   }, [segments]);
+
   useEffect(() => {
     socketService.connect();
     return () => {
       socketService.disconnect();
     }
-  },[]);
-  useEffect(( ) => {
+  }, []);
+
+  useEffect(() => {
     console.log('goldRate', rates?.rates?.goldCost);
-  },[rates])
+  }, [rates]);
+
   useEffect(() => {
     const getUser = async () => {
-      const userJson:any  = await AsyncStorage.getItem('user');
+      const userJson: any = await AsyncStorage.getItem('user');
       console.log('userJson', userJson);
       setUser(JSON.parse(userJson) || null);
     }
     getUser();
-  },[])
+  }, []);
 
   useEffect(() => {
     // iOS permission
@@ -58,7 +91,6 @@ export default function DashboardLayout({navigation}:any) {
       const enabled =
         authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
         authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
       if (enabled) {
         console.log('Authorization status:', authStatus);
         const token = await messaging().getToken();
@@ -66,15 +98,14 @@ export default function DashboardLayout({navigation}:any) {
         sendToken(token);
       }
     });
-
     // android permission
     PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS).then(async (res) => {
-        if (res === 'granted') {
-          const token = await messaging().getToken();
-          console.log('FCM Token:', token);
-          sendToken(token);
-        }
-      });
+      if (res === 'granted') {
+        const token = await messaging().getToken();
+        console.log('FCM Token:', token);
+        sendToken(token);
+      }
+    });
     // Foreground listener
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       Alert.alert(remoteMessage.notification?.title || 'New Notification', remoteMessage.notification?.body || '');
@@ -85,23 +116,21 @@ export default function DashboardLayout({navigation}:any) {
     });
     return unsubscribe;
   }, []);
+
   useEffect(() => {
     const checkUnreadNotifications = async () => {
       try {
         let userToken = await AsyncStorage.getItem('userToken');
         userToken = JSON.parse(userToken || '{}');
-
         const response = await axios.get(`${config.apiBaseUrl}/notifications`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${userToken}`,
           }
         });
-
         const notifications = response.data.data || [];
         let userJson = await AsyncStorage.getItem('user');
         const user = userJson ? JSON.parse(userJson) : null;
-
         if (user) {
           const hasUnread = notifications.some(
             (notif: any) => !notif.seen_by?.includes(user.id)
@@ -117,94 +146,58 @@ export default function DashboardLayout({navigation}:any) {
     }
     checkUnreadNotifications();
   }, [user]);
+
   const refreshUnreadNotifications = async () => {
-  try {
-    let userToken = await AsyncStorage.getItem('userToken');
-    userToken = JSON.parse(userToken || '{}');
-    const response = await axios.get(`${config.apiBaseUrl}/notifications`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${userToken}`,
+    try {
+      let userToken = await AsyncStorage.getItem('userToken');
+      userToken = JSON.parse(userToken || '{}');
+      const response = await axios.get(`${config.apiBaseUrl}/notifications`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${userToken}`,
+        }
+      });
+      const notifications = response.data.data || [];
+      let userJson = await AsyncStorage.getItem('user');
+      const user = userJson ? JSON.parse(userJson) : null;
+      if (user) {
+        const hasUnread = notifications.some(
+          (notif: any) => !notif.seen_by?.includes(user.id)
+        );
+        setHasUnreadNotifications(hasUnread);
+      } else {
+        setHasUnreadNotifications(false);
       }
-    });
-
-    const notifications = response.data.data || [];
-    let userJson = await AsyncStorage.getItem('user');
-    const user = userJson ? JSON.parse(userJson) : null;
-
-    if (user) {
-      const hasUnread = notifications.some(
-        (notif: any) => !notif.seen_by?.includes(user.id)
-      );
-      setHasUnreadNotifications(hasUnread);
-    } else {
+    } catch (error) {
+      console.log('Error refreshing unread notifications:', error);
       setHasUnreadNotifications(false);
     }
-  } catch (error) {
-    console.log('Error refreshing unread notifications:', error);
-    setHasUnreadNotifications(false);
-  }
-};
-  const sendToken = async (token:any) => {
+  };
+
+  const sendToken = async (token: any) => {
     await AsyncStorage.setItem('pushToken', JSON.stringify(token));
     let apiToken = await AsyncStorage.getItem('userToken');
     apiToken = JSON.parse(apiToken || '{}');
-    let response = await axios.get(`${config.apiBaseUrl}/expo-token?token=${token}`,{
-      headers:{
+    let response = await axios.get(`${config.apiBaseUrl}/expo-token?token=${token}`, {
+      headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiToken}`
       }
     });
-    console.log('token',token);
+    console.log('token', token);
     console.log('response', response.data);
-
   }
-   const lastBackPressed = useRef<number | null>(null);
-    const onBackPress:any = async () => {
-      const userJson = await AsyncStorage.getItem('user');
-      const user = userJson ? JSON.parse(userJson) : null;
 
-      if (user) {
-        const current:any = segments[segments.length - 1];
-        console.log('here is the current route', segments, current);
-        if (current === undefined || current !== 'index') {
-          // Not on the main screen: navigate back
-          router.back();
-          return false;
-        }
-        const now = Date.now();
-        if (lastBackPressed.current && now - lastBackPressed.current < 2000) {
-          // Second back press within 2 seconds: exit app
-          BackHandler.exitApp();
-          return true;
-        } else {
-          // First back press: show toast and store time
-          Toast.show({
-            type: 'info',
-            text1: 'Press back again to exit',
-          });
-          lastBackPressed.current = now;
-          return true;
-        }
-      }
-
-      // Default behavior if not logged in
-      return false;
-    };
-  useEffect(() => {
-    BackHandler.addEventListener('hardwareBackPress', onBackPress);
-  }, []);
   return (
-    <LayoutComponent>
     <GoldCostContext.Provider value={rates?.rates?.goldCost}>
       <NotificationsProvider>
-        <View style={{ flex: 1, marginTop:40, backgroundColor: 'white' }}>
+        <View style={{ flex: 1, marginTop: 40, backgroundColor: '#C2DFD6' }}>
           {user && <Menu />}
           <Slot /> {/* Renders the current active screen */}
-          {user && <BottomNavigation navigation={navigation}/>}
+          {user && <BottomNavigation navigation={navigation} />}
           <Toast />
         </View>
       </NotificationsProvider>
-    </LayoutComponent>
+    </GoldCostContext.Provider>
   );
 }

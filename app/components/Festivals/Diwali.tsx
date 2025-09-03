@@ -1,6 +1,6 @@
-import { LinearGradient } from "expo-linear-gradient"
-import LottieView from "lottie-react-native"
-import { StyleSheet, View } from "react-native"
+import { LinearGradient } from "expo-linear-gradient";
+import LottieView from "lottie-react-native";
+import { StyleSheet, View } from "react-native";
 import {
     heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
@@ -14,28 +14,22 @@ export default function DiwaliLayout({children}: React.PropsWithChildren<{}>) {
                     autoPlay
                     loop
                     resizeMode="cover"
-                    style={{ flex: 1, opacity: 0.7 }}
+                    style={ styles.lottieWrapper}
                 />
             </View>
-            <LinearGradient
-                colors={["#4760EB", "#2C3EEB", "#08078A"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.container}
-            >
                 {children}
-            </LinearGradient>
         </>
     )
 }
 
 const styles = StyleSheet.create({
-    container: {
-        height: "auto",
-        paddingBottom: hp(2),
-        borderBottomLeftRadius: 20,
-        borderBottomRightRadius: 20,
-    },
+    // container: {
+    //     height: "auto",
+    //     paddingBottom: hp(2),
+    //     borderBottomLeftRadius: 20,
+    //     borderBottomRightRadius: 20,
+    //     backgroundColor: 'transparent',
+    // },
     lottieWrapper: {
         ...StyleSheet.absoluteFillObject,
         flex: 1,

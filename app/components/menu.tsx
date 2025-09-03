@@ -122,13 +122,13 @@ export default function Menu() {
             <FontAwesome name="user-circle" size={18} color="#333" />
             <Text style={styles.menuText}>Profile</Text>
           </TouchableOpacity>
-          <TouchableOpacity 
+          {/* <TouchableOpacity 
             style={[styles.menuItem,(segments[segments.length - 1] == 'products')? {backgroundColor:'white'} : {}]}
             onPress={() => navigateTo('/dashboard/products')}
           >
             <FontAwesome name="gift" size={18} color="#333" />
             <Text style={styles.menuText}>Products</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity 
             style={[styles.menuItem, (segments[segments.length - 1] == 'notifications') ? { backgroundColor:'white' } : {}]}
             onPress={() => navigateTo('/dashboard/notifications')}
@@ -155,7 +155,7 @@ export default function Menu() {
       <View style={[styles.header, (!isDashboard) ? styles.menuShadow : {}]}>
         <View style={styles.container}>
           <TouchableOpacity onPress={toggleMenu} style={{ position: 'relative' }}>
-            <Entypo name="menu" size={30} color={isDashboard ? 'white' : 'black'}/>
+            <Entypo name="menu" size={30} color={isDashboard ? 'white' : 'black'} style={{zIndex:2}} />
             {hasUnread && <View style={styles.topbarRedDot} />}
           </TouchableOpacity>
           {!isDashboard && (
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
-    zIndex: 9999,
+    zIndex: 2,
     width: '100%',
     paddingTop: 10,
     paddingBottom: 5,

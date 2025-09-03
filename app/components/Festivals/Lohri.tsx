@@ -10,7 +10,7 @@ export default function LohriLayout({ children }: React.PropsWithChildren<{}>) {
     return (
         <>
             <LinearGradient
-                colors={["#4760EB", "#2C3EEB", "#08078A"]}
+                colors={["#C2DFD6", "#C2DFD6", "#C2DFD6"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.container}
@@ -30,17 +30,29 @@ export default function LohriLayout({ children }: React.PropsWithChildren<{}>) {
 
 const styles = StyleSheet.create({
     container: {
-        height: "auto",
+        // height: "auto",
+        // paddingBottom: hp(2),
+        // borderBottomLeftRadius: 20,
+        // borderBottomRightRadius: 20
+        width: wp(100), // make the container full width
+        height: hp(100),
         paddingBottom: hp(2),
         borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20,
+        pointerEvents: "box-none",
     },
     lottieBackground: {
         ...StyleSheet.absoluteFillObject,
-        bottom: 0,
-        justifyContent: "flex-end",
-        alignItems: "center",
+        // bottom: 0,
+        // justifyContent: "flex-end",
+        // alignItems: "center",
         pointerEvents: "none",
-        opacity: 0.7,
+        // opacity: 0.7,
+        zIndex: 1,
+        width: wp(50),
+        height: hp(50),
+        position: 'absolute',
+        top: '65%',
+        left: '50%',
     },
 })

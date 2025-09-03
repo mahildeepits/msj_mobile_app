@@ -1,58 +1,25 @@
-import React, { useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import {
-    Dimensions,
-    FlatList,
-    Image,
-    Modal,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  FlatList,
+  Image,
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
+import config from "../config";
 
 // Helper to group products into chunks
 const chunkArray = (array: any[], size: number) =>
   Array.from({ length: Math.ceil(array.length / size) }, (_, i) =>
     array.slice(i * size, i * size + size)
   );
-
-// Categories Data
-const categories = [
-  {
-    Earrings: [
-      { id: "1", image: require("../../assets/images/slider/3.jpg"), name: "Earing Design 1" },
-      { id: "2", image: require("../../assets/images/slider/7.jpg"), name: "Earing Design 2" },
-      { id: "3", image: require("../../assets/images/slider/3.jpg"), name: "Earing Design 3" },
-      { id: "4", image: require("../../assets/images/slider/7.jpg"), name: "Earing Design 4" },
-    ],
-  },
-  {
-    Necklaces: [
-      { id: "1", image: require("../../assets/images/slider/2.jpg"), name: "Necklace Design 1" },
-      { id: "2", image: require("../../assets/images/slider/6.jpg"), name: "Necklace Design 2" },
-      { id: "3", image: require("../../assets/images/slider/2.jpg"), name: "Necklace Design 3" },
-      { id: "4", image: require("../../assets/images/slider/6.jpg"), name: "Necklace Design 4" },
-    ],
-  },
-  {
-    bangles: [
-      { id: "1", image: require("../../assets/images/slider/4.jpg"), name: "Bangle Design 1" },
-      { id: "2", image: require("../../assets/images/slider/1.jpg"), name: "Bangle Design 2" },
-      { id: "3", image: require("../../assets/images/slider/8.jpg"), name: "Bangle Design 3" },
-      { id: "4", image: require("../../assets/images/slider/9.jpg"), name: "Bangle Design 4" },
-    ],
-  },
-  {
-    rings: [
-      { id: "1", image: require("../../assets/images/slider/5.jpg"), name: "Ring Design 1" },
-      { id: "2", image: require("../../assets/images/slider/10.jpg"), name: "Ring Design 2" },
-      { id: "3", image: require("../../assets/images/slider/5.jpg"), name: "Ring Design 3" },
-      { id: "4", image: require("../../assets/images/slider/10.jpg"), name: "Ring Design 4" },
-    ],
-  },
-];
 
 // Product Row Component
 const ProductRow = ({ title, data, onImagePress }: { title: string; data: any[]; onImagePress: (product: any) => void }) => {
@@ -72,7 +39,7 @@ const ProductRow = ({ title, data, onImagePress }: { title: string; data: any[];
               {item.map((product: any) => (
                 <TouchableOpacity key={product.id} onPress={() => onImagePress(product)}>
                   <View style={{ alignItems: "center" }}>
-                    <Image source={product.image} style={styles.productImage} />
+                    <Image source={{uri: product.image_path}} style={styles.productImage} />
                     <Text
                       style={{
                         fontSize: 13,
@@ -99,15 +66,61 @@ const ProductRow = ({ title, data, onImagePress }: { title: string; data: any[];
 // Main Screen
 export default function ProductsScreen() {
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
-
+  const [products,setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const syncProducts = async () => {
+      let cacheProducts = await AsyncStorage.getItem('products');
+      cacheProducts = JSON.parse(cacheProducts || '[]');
+      setProducts(cacheProducts);
+  }
+  const getProducts = async () => {
+    try {
+      setIsLoading(true);
+      let userToken = await AsyncStorage.getItem('userToken');
+      userToken = JSON.parse(userToken || '{}');
+      console.log(userToken);
+      const response = await axios.get(`${config.apiBaseUrl}/products`,{
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${userToken}`
+        }
+      });
+      if(response.data.status){
+        if(response.data.data !== products){
+          setProducts([response?.data?.data]);
+          await AsyncStorage.setItem('products',JSON.stringify([response.data.data]));
+        }
+      }
+      setIsLoading(false);
+      console.log(response.data.data);
+    } catch (error) {
+      console.error(error);
+      setIsLoading(false);
+    }
+  }
+  useEffect(() => {
+    syncProducts();
+    getProducts()
+  },[]);
   return (
     <ScrollView style={styles.container}>
       <View style={{ marginBottom: 20 }}>
-        {categories.map((cat, index) => {
-          const title = Object.keys(cat)[0];
-          const data = Object.values(cat)[0] as any[];
-          return <ProductRow key={index} title={title} data={data} onImagePress={setSelectedProduct} />;
-        })}
+        {isLoading ? (
+          <>
+          <Text style={styles.rowTitle}>Loading...</Text>
+          </>
+        ): (
+          <>
+            {products.length === 0 && <Text style={styles.rowTitle}>No Products Found</Text>}
+            {products.map((cat, index) => {
+                const title = Object.keys(cat)[0];
+                const data = Object.values(cat)[0] as any[];
+                return <ProductRow key={index} title={title} data={data} onImagePress={setSelectedProduct} />;
+              })
+            }
+          </>
+        )
+        }
       </View>
 
       {/* Full-Screen Modal */}
@@ -120,7 +133,7 @@ export default function ProductsScreen() {
                 <Text style={styles.modalTitle}>{selectedProduct.name}</Text>
 
                 {/* Full-width Image */}
-                <Image source={selectedProduct.image} style={styles.fullImage} resizeMode="contain" />
+                <Image source={{uri: selectedProduct.image_path}} style={styles.fullImage} resizeMode="contain" />
 
                 {/* Close Button */}
                 <Pressable style={styles.closeBtn} onPress={() => setSelectedProduct(null)}>

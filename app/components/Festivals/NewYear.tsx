@@ -47,14 +47,14 @@ export default function NewYearLayout({
         style={[styles.lottie, styles.right]}
       />
 
-      <LinearGradient
+      {/* <LinearGradient
         colors={["#4760EB", "#2C3EEB", "#08078A"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={styles.container}
-      >
+      > */}
         {children}
-      </LinearGradient>
+      {/* </LinearGradient> */}
     </>
   );
 }
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     height: hp(5),
   },
   bottom: {
-    bottom: 5,
+    bottom: 0,
     left: 0,
     right: 0,
     height: hp(5),

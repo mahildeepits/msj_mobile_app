@@ -1,6 +1,6 @@
-import { LinearGradient } from "expo-linear-gradient"
-import LottieView from "lottie-react-native"
-import { StyleSheet, View } from "react-native"
+import { LinearGradient } from "expo-linear-gradient";
+import LottieView from "lottie-react-native";
+import { StyleSheet } from "react-native";
 import {
     heightPercentageToDP as hp,
     widthPercentageToDP as wp
@@ -10,17 +10,24 @@ export default function EidLayout({ children }: React.PropsWithChildren<{}>) {
     return (
         <>
             <LinearGradient
-                colors={["#aaa", "#eee"]}
+                colors={["#C2DFD6", "#C2DFD6"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.container}
             >
                 <LottieView
-                    source={require('@/assets/animations/eid.json')}
+                    source={require('@/assets/animations/eid3.json')}
                     autoPlay
                     loop
                     resizeMode="cover"
-                    style={styles.lottieBackground}
+                    style={styles.lottieWrapper}
+                />
+                <LottieView
+                    source={require('@/assets/animations/eid3.json')}
+                    autoPlay
+                    loop
+                    resizeMode="cover"
+                    style={styles.lottieWrapper2}
                 />
                 {children}
             </LinearGradient>
@@ -31,18 +38,32 @@ export default function EidLayout({ children }: React.PropsWithChildren<{}>) {
 const styles = StyleSheet.create({
     container: {
         width: wp(100), // make the container full width
+        height: hp(100),
         paddingBottom: hp(2),
         borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20,
-        overflow: 'hidden', // to ensure border radius clips children
+        pointerEvents: "box-none",
+        // overflow: 'hidden', // to ensure border radius clips children
     },
-    lottieBackground: {
+    lottieWrapper: {
+        ...StyleSheet.absoluteFillObject,
+        zIndex: 1, 
+        width: wp(45),
+        height: hp(10),
         position: 'absolute',
-        left: -65,
-        bottom: 0,
-        width: wp(140),  // ensure lottie spans full width
-        height: hp(40),  // adjust height as needed for your animation
+        top: '1%',
+        left: '50%',
         pointerEvents: "none",
-        opacity: 0.6,
+        
+    },
+    lottieWrapper2:{
+        ...StyleSheet.absoluteFillObject,
+        zIndex: 1, 
+        width: wp(45),
+        height: hp(10),
+        position: 'absolute',
+        top: '1%',
+        left: '5%',
+        pointerEvents: "none",
     },
 });

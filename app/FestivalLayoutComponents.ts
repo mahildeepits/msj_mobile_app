@@ -6,7 +6,7 @@ import HoliLayout from "@/app/components/Festivals/Holi";
 import LohriLayout from "@/app/components/Festivals/Lohri";
 import NewYearLayout from "@/app/components/Festivals/NewYear";
 import ValentineLayout from "@/app/components/Festivals/Valentine";
-// import HomeLayout from "@/components/HomeLayout";
+import HomeLayout from "@/app/components/HomeLayout";
 
 export const FestivalLayoutComponents: { [key: string]: React.ComponentType<any> } = {
     Christmas   : ChristmasLayout,
@@ -16,5 +16,5 @@ export const FestivalLayoutComponents: { [key: string]: React.ComponentType<any>
     Lohri       : LohriLayout,
     NewYear     : NewYearLayout,
     Valentine   : ValentineLayout,
-    // Default     : HomeLayout,
+    Default     : HomeLayout,
 };

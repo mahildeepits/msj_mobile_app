@@ -1,6 +1,5 @@
-import { LinearGradient } from "expo-linear-gradient"
-import LottieView from "lottie-react-native"
-import { StyleSheet, View } from "react-native"
+import LottieView from "lottie-react-native";
+import { StyleSheet, View } from "react-native";
 import {
     heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
@@ -14,17 +13,10 @@ export default function HoliLayout({children}: React.PropsWithChildren<{}>) {
                     autoPlay
                     loop
                     resizeMode="cover"
-                    style={{ flex: 1, opacity: 0.6 }}
+                    style={styles.lottieWrapper}
                 />
             </View>
-            <LinearGradient
-                colors={["#4760EB", "#2C3EEB", "#08078A"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.container}
-            >
                 {children}
-            </LinearGradient>
         </>
     )
 }
@@ -38,8 +30,12 @@ const styles = StyleSheet.create({
     },
     lottieWrapper: {
         ...StyleSheet.absoluteFillObject,
-        flex: 1,
+        // flex: 1,
         zIndex: 1,
+        // marginTop: hp(6),
+        width: "100%",
+        height: '105%',
         pointerEvents: "none"
     }
+    
 })
