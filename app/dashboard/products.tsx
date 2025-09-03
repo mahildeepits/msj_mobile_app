@@ -70,7 +70,7 @@ export default function ProductsScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const syncProducts = async () => {
       let cacheProducts = await AsyncStorage.getItem('products');
-      cacheProducts = JSON.parse(cacheProducts || '[]');
+      cacheProducts = JSON.parse(cacheProducts || '{}');
       setProducts(cacheProducts);
   }
   const getProducts = async () => {
@@ -86,18 +86,33 @@ export default function ProductsScreen() {
         }
       });
       if(response.data.status){
-        if(response.data.data !== products){
-          setProducts([response?.data?.data]);
-          await AsyncStorage.setItem('products',JSON.stringify([response.data.data]));
+        let responseData = response.data.data;
+        if(hasProductData(responseData) && responseData !== products){
+          setProducts([responseData]);
+          await AsyncStorage.setItem('products',JSON.stringify([responseData]));
+        }else if(!hasProductData(responseData) && responseData !== products){
+          setProducts([]);
+          await AsyncStorage.setItem('products',JSON.stringify([]));
         }
       }
       setIsLoading(false);
-      console.log(response.data.data);
+      console.log('here are the products',response.data.data.length);
     } catch (error) {
       console.error(error);
       setIsLoading(false);
     }
   }
+  const hasProductData = (data: any) => {
+    if (Array.isArray(data)) {
+      // data is an array, check length directly
+      return data.length > 0;
+    } else if (typeof data === 'object' && data !== null) {
+      // data is an object, check if any of its keys have non-empty arrays
+      return Object.values(data).some((arr) => Array.isArray(arr) && arr.length > 0);
+    }
+    // data is null or something else
+    return false;
+  };
   useEffect(() => {
     syncProducts();
     getProducts()
@@ -111,13 +126,15 @@ export default function ProductsScreen() {
           </>
         ): (
           <>
-            {products.length === 0 && <Text style={styles.rowTitle}>No Products Found</Text>}
-            {products.map((cat, index) => {
-                const title = Object.keys(cat)[0];
-                const data = Object.values(cat)[0] as any[];
-                return <ProductRow key={index} title={title} data={data} onImagePress={setSelectedProduct} />;
-              })
-            }
+            {products.length === 0 ? (
+              <Text style={styles.rowTitle}>No Products Found</Text>
+            ) : (
+              products.map((cat, index) => {
+                  const title = Object.keys(cat)[0];
+                  const data = Object.values(cat)[0] as any[];
+                  return <ProductRow key={index} title={title} data={data} onImagePress={setSelectedProduct} />;
+                })
+            )}
           </>
         )
         }
