@@ -227,7 +227,7 @@ export default function CalculatorScreen(){
               <View style={styles.resultBox}>
                 <Text style={styles.resultsMainText} >GST </Text>
                 <Text style={styles.resultsTextColon} > : </Text>
-                <Text style={styles.resultsTextCal} >3% / ₹{gstAmount}</Text>
+                <Text style={styles.resultsTextCal} >{gst}% / ₹{gstAmount}</Text>
               </View>
               <View style={styles.resultBox}>
                 <Text style={styles.resultsMainText} >Grand Total</Text>

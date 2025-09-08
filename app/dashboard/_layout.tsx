@@ -18,11 +18,12 @@ export default function DashboardLayout({ navigation }: any) {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const rates: any = useRatesStore((state) => state.rates);
+  const [goldCurrentRate, setGoldCurrentRate] = useState(null);
   const segments = useSegments(); 
   const [routeName, setRouteName] = useState('');
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
   const projectId = Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
-
+  const [backendGoldRate, setBackendGoldRate] = useState<any>();
   const lastBackPress = useRef<number | null>(null);
 
   // Double-back-to-exit handling
@@ -71,9 +72,61 @@ export default function DashboardLayout({ navigation }: any) {
       socketService.disconnect();
     }
   }, []);
-
-  useEffect(() => {
+  const getRateFromBackend = async () => {
+    try {
+        let userToken = await AsyncStorage.getItem('userToken');
+        userToken = JSON.parse(userToken || '{}');
+        let response = await axios.get(`${config.apiBaseUrl}/gold-rate`, {
+          headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${userToken}`,
+          },
+        });
+        if(response.data.status){
+          setBackendGoldRate(response.data.data.gold_cost);
+          if(goldCurrentRate == null){
+            setGoldCurrentRate(response.data.data.gold_cost);
+          }
+        }
+        console.log('success in getting backend gold rate', response.data);
+      } catch (error) {
+        console.log('Error getting backend gold rate', error);
+      }
+  }
+  const setGoldRateInBackend = async () => {
+    try {
+        let userToken = await AsyncStorage.getItem('userToken');
+        userToken = JSON.parse(userToken || '{}');
+        let response = await axios.post(`${config.apiBaseUrl}/gold-rate`,{
+            gold_rate: goldCurrentRate,
+          }, {
+            headers:{
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${userToken}`,
+          },
+        });
+        if (response.data.status) {
+          setBackendGoldRate(goldCurrentRate);
+          console.log('get set go', response.data);
+        }
+      } catch (error) {
+        console.log('Error getting gold rate', error);
+      }
+  }
+  const getAndSetGoldRate = async () => {
+    if(goldCurrentRate == null){
+       await getRateFromBackend();
+    }
     console.log('goldRate', rates?.rates?.goldCost);
+    if(rates?.rates?.goldCost){
+      setGoldCurrentRate(rates?.rates?.goldCost)
+    }
+    if((goldCurrentRate && backendGoldRate) && ((goldCurrentRate - backendGoldRate) >= 50 || (goldCurrentRate - backendGoldRate) <= -50)){
+      await setGoldRateInBackend();
+    }
+  }
+  useEffect(() => {
+      getAndSetGoldRate();
   }, [rates]);
 
   useEffect(() => {
@@ -189,7 +242,7 @@ export default function DashboardLayout({ navigation }: any) {
   }
 
   return (
-    <GoldCostContext.Provider value={rates?.rates?.goldCost}>
+    <GoldCostContext.Provider value={goldCurrentRate}>
       <NotificationsProvider>
         <View style={{ flex: 1, marginTop: 40, backgroundColor: '#C2DFD6' }}>
           {user && <Menu />}
