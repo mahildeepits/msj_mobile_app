@@ -2,7 +2,7 @@ import { Entypo, FontAwesome5 } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import config from '../config';
 
 const tableData = [
@@ -83,16 +83,31 @@ export default function BankDetails({ goldcost }: any) {
     getBankDetails();
     getAddressDetails();
   }, []);
-
+  const getBankImage = (bankName:any) => {
+    let nameOfBank = bankName.toLowerCase();
+    
+    if(nameOfBank.includes('axis')){
+      return require('../../assets/images/axis.png');
+    }else if(nameOfBank.includes('sbi')){
+      return require('../../assets/images/sbi.png');
+    }else if(nameOfBank.includes('kotak')){
+      return require('../../assets/images/kotak.png');
+    }else if(nameOfBank.includes('indu')){
+      return require('../../assets/images/indus.png');
+    }else if(nameOfBank.includes('icici')){
+      return require('../../assets/images/icici.png');
+    }
+    return require('../../assets/images/hdfc.png');
+  }
   return (
-    <View style={{ flex: 1, backgroundColor: '#C2DFD6', paddingTop: 45 }}>
-      <View>
+    <ScrollView style={{flex:1,marginBottom:'16%'}} >
+      <View style={{ flex: 1, backgroundColor: '#C2DFD6', paddingTop: 45 }}>
         {/* Bank details */}
         <View>
           <View style={{ width: '100%', backgroundColor: '#fff', padding: 10 }}>
             <Image
-              source={require('../../assets/images/bank1.png')}
-              style={{ width: '100%', height: 60, resizeMode: 'contain' }}
+              source={getBankImage(bankDetails?.bank_name ?? 'Loading..')}
+              style={{ width: '100%', height: 60, resizeMode: 'contain',marginBottom:10 }}
             />
             <View style={{ paddingVertical: 10, paddingHorizontal: 5 }}>
                 <View style={styles.row}>
@@ -213,7 +228,7 @@ export default function BankDetails({ goldcost }: any) {
           Since 1975 in Amritsar, India
         </Text>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 

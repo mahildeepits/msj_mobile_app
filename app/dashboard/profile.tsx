@@ -1,10 +1,15 @@
 import { Entypo, FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
-  Keyboard, KeyboardAvoidingView, Platform, ScrollView,
+  Keyboard,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -12,8 +17,6 @@ import {
   TouchableWithoutFeedback,
   View
 } from "react-native";
-
-import { useRouter } from "expo-router";
 import Toast from "react-native-toast-message";
 import config from "../config";
 
@@ -31,7 +34,13 @@ export default function ProfileScreen() {
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
 
-  // Fetch current profile data from AsyncStorage
+  // Phone Number Verification Modal
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [profilePassword, setProfilePassword] = useState("");
+  const [phoneChanged, setPhoneChanged] = useState(false);
+  const [initialPhone, setInitialPhone] = useState("");
+
+  // Fetch profile data
   const getProfileData = async () => {
     let user = await AsyncStorage.getItem("user");
     user = JSON.parse(user || "{}");
@@ -39,18 +48,40 @@ export default function ProfileScreen() {
     setName(user?.name || "");
     setCity(user?.city_name || "");
     setPhone(user?.phone || "");
+    setInitialPhone(user?.phone || "");
+    setPhoneChanged(false);
   };
 
-  // Update profile data API
+  useEffect(() => {
+    getProfileData();
+  }, []);
+
+  useEffect(() => {
+    setPhoneChanged(phone !== initialPhone);
+  }, [phone, initialPhone]);
+
+  // First step on update: check phone change, show password modal if needed
+  const tryUpdateProfileData = async () => {
+    if (phoneChanged) {
+      setShowPasswordModal(true);
+    } else {
+      updateProfileData();
+    }
+  };
+
+  // Actual update request: now takes password if phone changed
   const updateProfileData = async () => {
     try {
       setLoading(true);
       let token = await AsyncStorage.getItem("userToken");
       token = JSON.parse(token || "{}");
 
+      const payload = { name, city, phone };
+      if (phoneChanged) payload.password = profilePassword;
+
       const response = await axios.post(
         `${config.apiBaseUrl}/profile`,
-        { name, city, phone },
+        payload,
         {
           headers: {
             "Content-Type": "application/json",
@@ -60,14 +91,13 @@ export default function ProfileScreen() {
       );
 
       let res = successHandler(response);
-      console.log('res', res);
-      if (res){
-        await AsyncStorage.removeItem('user');
-        await AsyncStorage.setItem('user', JSON.stringify(response.data.user));
-        console.log('Updated User:', response.data.user);
+      if (res) {
+        await AsyncStorage.removeItem("user");
+        await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
         getProfileData();
-      } 
-
+        setShowPasswordModal(false);
+        setProfilePassword(""); // clear modal field
+      }
     } catch (error) {
       errorHandler(error);
     } finally {
@@ -75,57 +105,60 @@ export default function ProfileScreen() {
     }
   };
 
-  // Change Password API
+  // Change Password API (no update needed)
   const handleResetPassword = async () => {
-      setPasswordLoading(true);
-      if(newPassword === '' || confirmPassword === '' || currentPassword === ''){
-        setPasswordLoading(false);
-        Alert.alert('Please enter all required fields');
-        return;
-      }
-      if(newPassword !== confirmPassword){
-        setPasswordLoading(false);
-        Alert.alert('Passwords do not match');
-        return;
-      }
-      let token = await AsyncStorage.getItem('userToken');
-      token = JSON.parse(token || "{}");
-      try{
-        const response = await axios.post(`${config.apiBaseUrl}/password/update`,{
+    setPasswordLoading(true);
+    if (newPassword === "" || confirmPassword === "" || currentPassword === "") {
+      setPasswordLoading(false);
+      Alert.alert("Please enter all required fields");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordLoading(false);
+      Alert.alert("Passwords do not match");
+      return;
+    }
+    let token = await AsyncStorage.getItem("userToken");
+    token = JSON.parse(token || "{}");
+    try {
+      const response = await axios.post(
+        `${config.apiBaseUrl}/password/update`,
+        {
           current_password: currentPassword,
           new_password: newPassword,
           confirm_password: confirmPassword,
-        },{
+        },
+        {
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          }
-        });
-        let res = successHandler(response);
-        if(res){
-          // (Optional) Store token or user if API sends back
-          await AsyncStorage.removeItem('user');
-          await AsyncStorage.removeItem('userToken');
-          setTimeout(() => {
-            router.navigate('/');
-          }, 2000);
-        } else {
-          setPasswordLoading(false);
-          Toast.show({
-            type: "error",
-            text1: "Reset Error",
-            text2: response.data.message,
-            position: "top",
-            visibilityTime: 5000,
-          });
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
-      }catch(error){
-          setPasswordLoading(false);
-         errorHandler(error);
+      );
+      let res = successHandler(response);
+      if (res) {
+        await AsyncStorage.removeItem("user");
+        await AsyncStorage.removeItem("userToken");
+        setTimeout(() => {
+          router.navigate("/");
+        }, 2000);
+      } else {
+        setPasswordLoading(false);
+        Toast.show({
+          type: "error",
+          text1: "Reset Error",
+          text2: response.data.message,
+          position: "top",
+          visibilityTime: 5000,
+        });
       }
+    } catch (error) {
+      setPasswordLoading(false);
+      errorHandler(error);
     }
+  };
 
-  const successHandler = (response: any) => {
+  const successHandler = (response) => {
     if (response.data.status) {
       Toast.show({
         type: "success",
@@ -146,7 +179,7 @@ export default function ProfileScreen() {
     }
   };
 
-  const errorHandler = (error: any) => {
+  const errorHandler = (error) => {
     let message = "Something went wrong. Please try again.";
     if (error?.response?.data?.message) {
       message = error?.response.data.message;
@@ -155,7 +188,7 @@ export default function ProfileScreen() {
       const errorsObject = error?.response.data.errors;
       if (typeof errorsObject === "object") {
         Object.entries(errorsObject).forEach(([_, errArr]) => {
-          message = `${errArr[0]}`;
+          message = `${errArr}`;
         });
       }
     }
@@ -168,148 +201,205 @@ export default function ProfileScreen() {
     });
   };
 
-  useEffect(() => {
-    getProfileData();
-  }, []);
-
+  // Actual render
   return (
     <KeyboardAvoidingView
-    style={{ flex: 1 }}
-    behavior={Platform.OS === "ios" ? "padding" : "height"}
-    keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0} // adjust as needed for your layout/header
-  >
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <ScrollView style={styles.container}>
-        <View style={{ marginBottom: 0 }}>
-            
-          {/* === Profile Form === */}
-          <View style={styles.form}>
-            <View style={styles.formHeader}>
-              <Text style={styles.formTitle}>Manage Profile</Text>
-            </View>
-            {/* Name */}
-            <View style={styles.inputRow}>
-              <View style={styles.iconBox}>
-                <FontAwesome name="user" size={20} />
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <ScrollView style={styles.container}>
+          <View style={{ marginBottom: 0 }}>
+            {/* === Profile Form === */}
+            <View style={styles.form}>
+              <View style={styles.formHeader}>
+                <Text style={styles.formTitle}>Manage Profile</Text>
               </View>
-              <TextInput
-                style={styles.inputBox}
-                placeholder="Enter your name"
-                value={name}
-                onChangeText={setName}
-              />
+              {/* Name */}
+              <View style={styles.inputRow}>
+                <View style={styles.iconBox}>
+                  <FontAwesome name="user" size={20} />
+                </View>
+                <TextInput
+                  style={styles.inputBox}
+                  placeholder="Enter your name"
+                  value={name}
+                  onChangeText={setName}
+                />
+              </View>
+
+              {/* City */}
+              <View style={styles.inputRow}>
+                <View style={styles.iconBox}>
+                  <FontAwesome name="location-arrow" size={20} />
+                </View>
+                <TextInput
+                  style={styles.inputBox}
+                  placeholder="Enter your City"
+                  value={city}
+                  onChangeText={setCity}
+                />
+              </View>
+
+              {/* Phone */}
+              <View style={styles.inputRow}>
+                <View style={styles.iconBox}>
+                  <FontAwesome name="phone" size={20} />
+                </View>
+                <TextInput
+                  style={styles.inputBox}
+                  placeholder="Enter Mobile Number"
+                  value={phone}
+                  keyboardType="number-pad"
+                  onChangeText={setPhone}
+                />
+              </View>
+
+              {/* Update Button */}
+              <View style={styles.mb20}>
+                <View style={styles.radioGroup}>
+                  <TouchableOpacity
+                    style={styles.radioButton}
+                    onPress={tryUpdateProfileData}
+                    disabled={loading}
+                  >
+                    <Entypo name="save" size={16} color="black" />
+                    <Text style={styles.btnText}>
+                      {loading ? "UPDATING..." : "UPDATE"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
 
-            {/* City */}
-            <View style={styles.inputRow}>
-              <View style={styles.iconBox}>
-                <FontAwesome name="location-arrow" size={20} />
-              </View>
-              <TextInput
-                style={styles.inputBox}
-                placeholder="Enter your City"
-                value={city}
-                onChangeText={setCity}
-              />
-            </View>
-
-            {/* Phone */}
-            <View style={styles.inputRow}>
-              <View style={styles.iconBox}>
-                <FontAwesome name="phone" size={20} />
-              </View>
-              <TextInput
-                style={styles.inputBox}
-                placeholder="Enter Mobile Number"
-                value={phone}
-                keyboardType="number-pad"
-                onChangeText={setPhone}
-              />
-            </View>
-
-            {/* Update Button */}
-            <View style={styles.mb20}>
-              <View style={styles.radioGroup}>
-                <TouchableOpacity
-                  style={styles.radioButton}
-                  onPress={updateProfileData}
-                  disabled={loading}
-                >
-                  <Entypo name="save" size={16} color="black" />
-                  <Text style={styles.btnText}>
-                    {loading ? "UPDATING..." : "UPDATE"}
+            {/* Password Modal for Phone Change */}
+            <Modal
+              transparent={true}
+              visible={showPasswordModal}
+              animationType="fade"
+              onRequestClose={() => setShowPasswordModal(false)}
+            >
+              <View style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "rgba(0,0,0,0.15)"
+              }}>
+                <View style={[styles.form, {padding: 25, width: "85%"}]}>
+                  <Text style={styles.formTitle}>Verify Password</Text>
+                  <Text style={{marginBottom: 12, textAlign: "center", fontSize: 13}}>
+                    To update your mobile number, please enter your password.
                   </Text>
-                </TouchableOpacity>
+                  <View style={styles.inputRow}>
+                    <View style={styles.iconBox}>
+                      <FontAwesome name="key" size={20} />
+                    </View>
+                    <TextInput
+                      style={styles.inputBox}
+                      placeholder="Enter Password"
+                      secureTextEntry
+                      autoFocus
+                      value={profilePassword}
+                      onChangeText={setProfilePassword}
+                    />
+                  </View>
+                  <View style={[styles.radioGroup, {marginTop: 10}]}>
+                    <TouchableOpacity
+                      style={styles.radioButton}
+                      onPress={() => {
+                        if (!profilePassword) {
+                          Alert.alert("Please enter your password to verify");
+                          return;
+                        }
+                        updateProfileData();
+                      }}
+                    >
+                      <Entypo name="save" size={16} color="black" />
+                      <Text style={styles.btnText}>CONFIRM & UPDATE</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[styles.radioButton, { backgroundColor: "#f9f9f9", borderColor: "#f9f9f9" }]}
+                      onPress={() => {
+                        setShowPasswordModal(false);
+                        setProfilePassword("");
+                        setPhone(initialPhone);
+                      }}
+                    >
+                      <FontAwesome name="times" size={16} color="black" />
+                      <Text style={styles.btnText}>CANCEL</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </Modal>
+
+            {/* === Change Password Form === */}
+            <View style={[styles.form,{marginTop: 25}]}>
+              <View style={styles.formHeader}>
+                <Text style={styles.formTitle}>Change Password</Text>
+              </View>
+              {/* old password */}
+              <View style={styles.inputRow}>
+                <View style={styles.iconBox}>
+                  <FontAwesome name="key" size={20} />
+                </View>
+                <TextInput
+                  style={styles.inputBox}
+                  placeholder="Enter Current Password"
+                  secureTextEntry
+                  value={currentPassword}
+                  onChangeText={setCurrentPassword}
+                />
+              </View>
+              {/* New Password */}
+              <View style={styles.inputRow}>
+                <View style={styles.iconBox}>
+                  <FontAwesome name="key" size={20} />
+                </View>
+                <TextInput
+                  style={styles.inputBox}
+                  placeholder="Enter New Password"
+                  secureTextEntry
+                  value={newPassword}
+                  onChangeText={setNewPassword}
+                />
+              </View>
+
+              {/* Confirm Password */}
+              <View style={styles.inputRow}>
+                <View style={styles.iconBox}>
+                  <FontAwesome name="check" size={20} />
+                </View>
+                <TextInput
+                  style={styles.inputBox}
+                  placeholder="Confirm New Password"
+                  secureTextEntry
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                />
+              </View>
+
+              {/* Update Password Button */}
+              <View style={styles.mb20}>
+                <View style={styles.radioGroup}>
+                  <TouchableOpacity
+                    style={styles.radioButton}
+                    onPress={handleResetPassword}
+                    disabled={passwordLoading}
+                  >
+                    <Entypo name="save" size={16} color="black" />
+                    <Text style={styles.btnText}>
+                      {passwordLoading ? "UPDATING..." : "UPDATE"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </View>
-
-          {/* === Change Password Form === */}
-          <View style={[styles.form,{marginTop: 25}]}>
-            <View style={styles.formHeader}>
-              <Text style={styles.formTitle}>Change Password</Text>
-            </View>
-            {/* old password */}
-            <View style={styles.inputRow}>
-              <View style={styles.iconBox}>
-                <FontAwesome name="key" size={20} />
-              </View>
-              <TextInput
-                style={styles.inputBox}
-                placeholder="Enter Current Password"
-                secureTextEntry
-                value={currentPassword}
-                onChangeText={setCurrentPassword}
-              />
-            </View>
-            {/* New Password */}
-            <View style={styles.inputRow}>
-              <View style={styles.iconBox}>
-                <FontAwesome name="key" size={20} />
-              </View>
-              <TextInput
-                style={styles.inputBox}
-                placeholder="Enter New Password"
-                secureTextEntry
-                value={newPassword}
-                onChangeText={setNewPassword}
-              />
-            </View>
-
-            {/* Confirm Password */}
-            <View style={styles.inputRow}>
-              <View style={styles.iconBox}>
-                <FontAwesome name="check" size={20} />
-              </View>
-              <TextInput
-                style={styles.inputBox}
-                placeholder="Confirm New Password"
-                secureTextEntry
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-              />
-            </View>
-
-            {/* Update Password Button */}
-            <View style={styles.mb20}>
-              <View style={styles.radioGroup}>
-                <TouchableOpacity
-                  style={styles.radioButton}
-                  onPress={handleResetPassword}
-                  disabled={passwordLoading}
-                >
-                  <Entypo name="save" size={16} color="black" />
-                  <Text style={styles.btnText}>
-                    {passwordLoading ? "UPDATING..." : "UPDATE"}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </View>
-      </ScrollView>
-    </TouchableWithoutFeedback>
-  </KeyboardAvoidingView>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -321,7 +411,6 @@ const styles = StyleSheet.create({
     marginTop: 45,
   },
   form: {
-    // marginTop: 25,
     paddingBottom: 15,
     paddingHorizontal: 15,
     backgroundColor: "white",
@@ -332,12 +421,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 15,
-    // borderWidth:1,
   },
   formTitle: {
     textAlign: "center",
     fontSize: 14,
-    // paddingBottom: 5,
     textTransform: "uppercase",
     fontWeight: "bold",
   },

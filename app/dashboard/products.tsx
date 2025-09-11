@@ -78,7 +78,6 @@ export default function ProductsScreen() {
       setIsLoading(true);
       let userToken = await AsyncStorage.getItem('userToken');
       userToken = JSON.parse(userToken || '{}');
-      console.log(userToken);
       const response = await axios.get(`${config.apiBaseUrl}/products`,{
         headers: {
           'Content-Type': 'application/json',
@@ -88,7 +87,7 @@ export default function ProductsScreen() {
       if(response.data.status){
         let responseData = response.data.data;
         if(hasProductData(responseData) && responseData !== products){
-          setProducts([responseData]);
+          setProducts(responseData);
           await AsyncStorage.setItem('products',JSON.stringify([responseData]));
         }else if(!hasProductData(responseData) && responseData !== products){
           setProducts([]);
@@ -96,7 +95,6 @@ export default function ProductsScreen() {
         }
       }
       setIsLoading(false);
-      console.log('here are the products',response.data.data.length);
     } catch (error) {
       console.error(error);
       setIsLoading(false);
@@ -130,6 +128,8 @@ export default function ProductsScreen() {
               <Text style={styles.rowTitle}>No Products Found</Text>
             ) : (
               products.map((cat, index) => {
+                  console.log('cat',cat);
+                  console.log('index',index);
                   const title = Object.keys(cat)[0];
                   const data = Object.values(cat)[0] as any[];
                   return <ProductRow key={index} title={title} data={data} onImagePress={setSelectedProduct} />;
