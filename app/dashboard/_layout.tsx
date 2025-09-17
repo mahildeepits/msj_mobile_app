@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import messaging from '@react-native-firebase/messaging';
 import axios from "axios";
 import Constants from 'expo-constants';
+import * as NavigationBar from 'expo-navigation-bar';
 import { Slot, useRouter, useSegments } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Alert, BackHandler, PermissionsAndroid, View } from "react-native";
@@ -13,7 +14,6 @@ import BottomNavigation from "./../components/bottomNavigation";
 import Menu from "./../components/menu";
 import GoldCostContext from "./goldContext";
 import { NotificationsProvider } from "./notificationContext";
-
 export default function DashboardLayout({ navigation }: any) {
   const router = useRouter();
   const [user, setUser] = useState(null);
@@ -25,12 +25,15 @@ export default function DashboardLayout({ navigation }: any) {
   const projectId = Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
   const [backendGoldRate, setBackendGoldRate] = useState<any>();
   const lastBackPress = useRef<number | null>(null);
-
+  // NavigationBar.setBehaviorAsync('immersive-sticky'); 
+  // immersive-sticky = navigation bar hidden,
+  // reappears with swipe gesture and fades again after a moment
+  NavigationBar.setVisibilityAsync('hidden');
   // Double-back-to-exit handling
   useEffect(() => {
     const onBackPress = () => {
       const current = segments[segments.length - 1];
-      console.log(current);
+      // console.log(current);
       // Only apply double back exit logic on /dashboard/index
       if (!current || current === 'dashboard') {
         const now = Date.now();
@@ -88,9 +91,9 @@ export default function DashboardLayout({ navigation }: any) {
             setGoldCurrentRate(response.data.data.gold_cost);
           }
         }
-        console.log('success in getting backend gold rate', response.data);
+        // console.log('success in getting backend gold rate', response.data);
       } catch (error) {
-        console.log('Error getting backend gold rate', error);
+        // console.log('Error getting backend gold rate', error);
       }
   }
   const setGoldRateInBackend = async () => {
@@ -107,17 +110,17 @@ export default function DashboardLayout({ navigation }: any) {
         });
         if (response.data.status) {
           setBackendGoldRate(goldCurrentRate);
-          console.log('get set go', response.data);
+          // console.log('get set go', response.data);
         }
       } catch (error) {
-        console.log('Error getting gold rate', error);
+        // console.log('Error getting gold rate', error);
       }
   }
   const getAndSetGoldRate = async () => {
     if(goldCurrentRate == null){
        await getRateFromBackend();
     }
-    console.log('goldRate', rates?.rates?.goldCost);
+    // console.log('goldRate', rates?.rates?.goldCost);
     if(rates?.rates?.goldCost){
       setGoldCurrentRate(rates?.rates?.goldCost)
     }
@@ -132,7 +135,7 @@ export default function DashboardLayout({ navigation }: any) {
   useEffect(() => {
     const getUser = async () => {
       const userJson: any = await AsyncStorage.getItem('user');
-      console.log('userJson', userJson);
+      // console.log('userJson', userJson);
       setUser(JSON.parse(userJson) || null);
     }
     getUser();
@@ -145,9 +148,9 @@ export default function DashboardLayout({ navigation }: any) {
         authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
         authStatus === messaging.AuthorizationStatus.PROVISIONAL;
       if (enabled) {
-        console.log('Authorization status:', authStatus);
+        // console.log('Authorization status:', authStatus);
         const token = await messaging().getToken();
-        console.log('FCM Token:', token);
+        // console.log('FCM Token:', token);
         sendToken(token);
       }
     });
@@ -155,7 +158,7 @@ export default function DashboardLayout({ navigation }: any) {
     PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS).then(async (res) => {
       if (res === 'granted') {
         const token = await messaging().getToken();
-        console.log('FCM Token:', token);
+        // console.log('FCM Token:', token);
         sendToken(token);
       }
     });
@@ -165,7 +168,7 @@ export default function DashboardLayout({ navigation }: any) {
     });
     // Background/quit listener
     messaging().setBackgroundMessageHandler(async remoteMessage => {
-      console.log('Message handled in the background!', remoteMessage);
+      // console.log('Message handled in the background!', remoteMessage);
     });
     return unsubscribe;
   }, []);
@@ -193,7 +196,7 @@ export default function DashboardLayout({ navigation }: any) {
           setHasUnreadNotifications(false);
         }
       } catch (error) {
-        console.log('Error checking unread notifications:', error);
+        // console.log('Error checking unread notifications:', error);
         setHasUnreadNotifications(false);
       }
     }
@@ -222,7 +225,7 @@ export default function DashboardLayout({ navigation }: any) {
         setHasUnreadNotifications(false);
       }
     } catch (error) {
-      console.log('Error refreshing unread notifications:', error);
+      // console.log('Error refreshing unread notifications:', error);
       setHasUnreadNotifications(false);
     }
   };
@@ -237,8 +240,8 @@ export default function DashboardLayout({ navigation }: any) {
         'Authorization': `Bearer ${apiToken}`
       }
     });
-    console.log('token', token);
-    console.log('response', response.data);
+    // console.log('token', token);
+    // console.log('response', response.data);
   }
 
   return (

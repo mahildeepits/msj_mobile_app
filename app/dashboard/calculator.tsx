@@ -38,7 +38,7 @@ export default function CalculatorScreen(){
         'Authorization': `Bearer ${token}`
       }
     });
-    console.log(response.data.data[0].id);
+    // console.log(response.data.data[0].id);
     const allData = response.data.data; // full array
     const dataById:any = {};
     const chargesInputData:any = [];

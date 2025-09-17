@@ -98,7 +98,7 @@ export default function Index(){
         } else if (typeof errorsObject === 'object') {
           // If errors is an object (key: array of messages)
           Object.entries(errorsObject).forEach(([key, errArr]) => {
-            console.log(key, errArr);
+            // console.log(key, errArr);
             message = `${errArr[0]}`;
           });
         }
@@ -110,7 +110,7 @@ export default function Index(){
         position: "top",
         visibilityTime: 5000,
       });
-      console.log('here',message,error?.response.data);
+      // console.log('here',message,error?.response.data);
     }
   const handleSendOtp = async () => {
     setVerifyLoading(true)

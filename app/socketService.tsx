@@ -24,7 +24,7 @@ class SocketService {
     connect() {
         // Prevent multiple simultaneous connection attempts
         if (this.isConnecting) {
-            console.log('Connection already in progress, skipping');
+            // console.log('Connection already in progress, skipping');
             return;
         }
 
@@ -46,7 +46,7 @@ class SocketService {
 
             // Register event handlers using our safe method
             this.registerHandler('connect', () => {
-                console.log('Socket.io connected');
+                // console.log('Socket.io connected');
                 this.reconnectAttempts = 0;
                 this.isConnecting = false;
 
@@ -66,7 +66,7 @@ class SocketService {
            
 
             this.registerHandler('disconnect', (reason:any) => {
-                console.log('Socket.io disconnected:', reason);
+                // console.log('Socket.io disconnected:', reason);
                 this.isConnecting = false;
                 this.handleReconnect();
             });
@@ -80,7 +80,7 @@ class SocketService {
                 console.error('Socket.io error:', error);
             });
 
-            console.log('Socket.io connection initialized');
+            // console.log('Socket.io connection initialized');
         } catch (error) {
             console.error('Error initializing socket.io:', error);
             this.handleReconnect();
@@ -131,7 +131,7 @@ class SocketService {
         if (this.reconnectAttempts < this.maxReconnectAttempts) {
             this.reconnectAttempts++;
             const delay = this.reconnectTimeout * Math.pow(1.5, this.reconnectAttempts - 1);
-            console.log(`Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts}) in ${delay}ms...`);
+            // console.log(`Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts}) in ${delay}ms...`);
 
             setTimeout(() => this.connect(), delay);
         } else {
@@ -157,7 +157,7 @@ class SocketService {
             this.socket.disconnect();
             this.socket = null;
             this.isConnecting = false;
-            console.log('Socket disconnected and all handlers cleaned up');
+            // console.log('Socket disconnected and all handlers cleaned up');
         }
     }
 }

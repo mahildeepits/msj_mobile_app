@@ -89,7 +89,7 @@ export default function NotificationPage() {
         const formattedTime = createdDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
         const fontWeightStyle:any = { fontWeight: isSeen ? 'normal' : 'bold' };
-        console.log(fontWeightStyle);
+        // console.log(fontWeightStyle);
         return (
             <TouchableOpacity onPress={() => onNotificationPress(item)}>
             <View style={styles.rowContainer}>

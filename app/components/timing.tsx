@@ -29,7 +29,7 @@ export default function Timing() {
 
   useEffect(() => {
     const getShopTimings = async () => {
-      console.log('Fetching shop timings...');
+      // console.log('Fetching shop timings...');
       let token = await AsyncStorage.getItem('userToken');
       token = JSON.parse(token || '{}');
       const response = await axios
@@ -41,7 +41,7 @@ export default function Timing() {
         })
         .catch((error) => console.log(error));
       if (response && response.data.status) {
-        console.log(response.data.data);
+        // console.log(response.data.data);
         setWeekSchedule(response.data.data);
         setSchedule(getSortedSchedule(response.data.data));
         setCurrentDay(response.data.data[0]);

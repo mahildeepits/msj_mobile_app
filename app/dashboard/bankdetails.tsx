@@ -2,7 +2,7 @@ import { Entypo, FontAwesome5 } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import config from '../config';
 
 const tableData = [
@@ -26,7 +26,7 @@ export default function BankDetails({ goldcost }: any) {
   }, [bankDetails]);
 
   const getBankDetails = async () => {
-    console.log('Fetching bank details...');
+    // console.log('Fetching bank details...');
     try {
       let token = await AsyncStorage.getItem('userToken');
       token = JSON.parse(token || '{}');
@@ -42,7 +42,7 @@ export default function BankDetails({ goldcost }: any) {
           await AsyncStorage.setItem('bankDetails', JSON.stringify(response.data.data));
         }
       }
-      console.log('bank details',response.data.data);
+      // console.log('bank details',response.data.data);
     } catch (error) {
       console.error('Error fetching bank details:', error);
     }
@@ -57,7 +57,7 @@ export default function BankDetails({ goldcost }: any) {
   }
   
   const getAddressDetails = async () => {
-    console.log('Fetching address details...');
+    // console.log('Fetching address details...');
     try {
       let token = await AsyncStorage.getItem('userToken');
       token = JSON.parse(token || '{}');
@@ -180,15 +180,44 @@ export default function BankDetails({ goldcost }: any) {
             paddingVertical: 5,
           }}
         >
-          <View style={styles.directionsButton}>
+          <TouchableOpacity
+            style={styles.directionsButton}
+            onPress={() => {
+              const instagramURL = 'instagram://user?username=mohindersinghjeweller';
+              const instagramWebURL = 'https://instagram.com/mohindersinghjeweller';
+              Linking.canOpenURL(instagramURL).then((supported) => {
+                supported ? Linking.openURL(instagramURL) : Linking.openURL(instagramWebURL);
+              });
+            }}
+          >
             <Image source={require('../../assets/images/instagram.png')} style={styles.image} />
-          </View>
-          <View style={styles.directionsButton}>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.directionsButton}
+            onPress={() => {
+              const whatsappURL = 'whatsapp://send?phone=+917009985404';
+              const whatsappWebURL = 'https://wa.me/+917009985404';
+              Linking.canOpenURL(whatsappURL).then((supported) => {
+                supported ? Linking.openURL(whatsappURL) : Linking.openURL(whatsappWebURL);
+              });
+            }}
+          >
             <Image source={require('../../assets/images/whatsapp.png')} style={styles.image} />
-          </View>
-          <View style={styles.directionsButton}>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.directionsButton}
+            onPress={() => {
+              const facebookURL = 'fb://profile/mohinderjewellers';
+              const facebookWebURL = 'https://facebook.com/mohinderjewellers';
+              Linking.canOpenURL(facebookURL).then((supported) => {
+                supported ? Linking.openURL(facebookURL) : Linking.openURL(facebookWebURL);
+              });
+            }}
+          >
             <Image source={require('../../assets/images/facebook.png')} style={styles.image} />
-          </View>
+          </TouchableOpacity>
         </View>
 
         {/* Logo */}

@@ -41,7 +41,7 @@ export const NotificationsProvider: React.FC<{children: React.ReactNode}> = ({ c
         setHasUnread(false);
       }
     } catch (error) {
-      console.log('Error checking unread notifications:', error);
+      // console.log('Error checking unread notifications:', error);
       setHasUnread(false);
     }
   };

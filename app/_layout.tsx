@@ -11,7 +11,7 @@ export default function RootLayout() {
     const user = userJson ? JSON.parse(userJson) : null;
     if(user){
       // User is authenticated, navigate to dashboard
-      console.log('User is authenticated', user);
+      // console.log('User is authenticated', user);
       router.navigate('/dashboard');
     }
   }

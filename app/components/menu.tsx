@@ -55,7 +55,7 @@ export default function Menu() {
   };
 
   const handleLogout = () => {
-    console.log('herree');
+    // console.log('herree');
     setMenuOpen(false);
 
     Alert.alert(

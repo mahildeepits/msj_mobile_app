@@ -2,16 +2,16 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import {
-  Dimensions,
-  FlatList,
-  Image,
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Dimensions,
+    FlatList,
+    Image,
+    Modal,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import config from "../config";
 
@@ -128,8 +128,8 @@ export default function ProductsScreen() {
               <Text style={styles.rowTitle}>No Products Found</Text>
             ) : (
               products.map((cat, index) => {
-                  console.log('cat',cat);
-                  console.log('index',index);
+                  // console.log('cat',cat);
+                  // console.log('index',index);
                   const title = Object.keys(cat)[0];
                   const data = Object.values(cat)[0] as any[];
                   return <ProductRow key={index} title={title} data={data} onImagePress={setSelectedProduct} />;

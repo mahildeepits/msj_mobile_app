@@ -22,7 +22,7 @@ export default function Index(){
     }
     try{
       const response = await axios.post(`${config.apiBaseUrl}/login`,{phone,password});
-      console.log('therere',response);
+      // console.log('therere',response);
       if(response.data.status){
         Toast.show({
           type: "success",
@@ -64,7 +64,7 @@ export default function Index(){
         } else if (typeof errorsObject === 'object') {
           // If errors is an object (key: array of messages)
           Object.entries(errorsObject).forEach(([key, errArr]) => {
-            console.log(key, errArr);
+            // console.log(key, errArr);
             message = `${errArr[0]}`;
           });
         }
@@ -76,7 +76,7 @@ export default function Index(){
         position: "top",
         visibilityTime: 5000,
       });
-      console.log('here',message,error);
+      // console.log('here',message,error);
     }
   }
   return (

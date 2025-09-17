@@ -27,13 +27,13 @@ export default function Dashboard() {
           'Authorization': `Bearer ${token}`,
         },
       });
-      console.log('jeewdtufiggsuiha',response.data);
+      // console.log('jeewdtufiggsuiha',response.data);
       if(response.data.status){
         setEvent(response.data.data.name || 'Default');
-        console.log(response.data.data);
+        // console.log(response.data.data);
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }
   useEffect(() => {
