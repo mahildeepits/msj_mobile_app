@@ -7,7 +7,7 @@ import React, { useState } from 'react'
 import { Alert, Image, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 import config from './config'
-export default function Index(){
+export default function Index() {
   const router = useRouter();
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
@@ -15,15 +15,15 @@ export default function Index(){
   const [loading, setLoading] = useState(false);
   const handleLogin = async () => {
     setLoading(true);
-    if(phone == '' || password == ''){
+    if (phone == '' || password == '') {
       setLoading(false);
       Alert.alert('Please fill valid email and password ');
       return;
     }
-    try{
-      const response = await axios.post(`${config.apiBaseUrl}/login`,{phone,password});
+    try {
+      const response = await axios.post(`${config.apiBaseUrl}/login`, { phone, password }, { headers: { "Content-Type": "application/json", "Accept": "application/json" }, });
       // console.log('therere',response);
-      if(response.data.status){
+      if (response.data.status) {
         Toast.show({
           type: "success",
           text1: response.data.message,
@@ -38,7 +38,7 @@ export default function Index(){
           setLoading(false);
           router.navigate('/dashboard');
         }, 2000);
-      }else{
+      } else {
         setLoading(false);
         Toast.show({
           type: "error",
@@ -48,14 +48,14 @@ export default function Index(){
           visibilityTime: 5000,
         });
       }
-      
-    }catch(error){
+
+    } catch (error) {
       setLoading(false);
       let message = "Something went wrong. Please try again.";
       if (error?.response?.data?.message) {
         message = error?.response.data.message;
       }
-      if(error?.response?.data?.errors){
+      if (error?.response?.data?.errors) {
         const errorsObject = error?.response.data.errors;
         if (Array.isArray(errorsObject)) {
           errorsObject.forEach((err) => {
@@ -81,9 +81,9 @@ export default function Index(){
   }
   return (
     <>
-      <ImageBackground source={require('../assets/images/login.jpg')} style={{flex: 1,marginTop:'10%'}}>
+      <ImageBackground source={require('../assets/images/login.jpg')} style={{ flex: 1, marginTop: '10%' }}>
         <KeyboardAvoidingView
-          style={{flex: 1}}
+          style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
         >
@@ -95,59 +95,59 @@ export default function Index(){
             showsVerticalScrollIndicator={true}
             bounces={false}
           >
-            <View key={'form'} style={{marginTop:'25%',backgroundColor: 'rgba(255,255,255,0.6)',marginHorizontal:10,borderRadius:10,}}>
-              <View style={{alignItems: 'center',paddingTop:20,}}>
-                <Image source={require('../assets/images/logo-mini.png')} style={{width:80,height:90}} />
-                <View style={{alignItems: 'center',}}>
-                  <Text style={{fontSize:24,fontWeight:'bold',fontFamily:'serif',textTransform:'uppercase',textAlign:'center'}}>Mohinder Singh Jewellers</Text>
+            <View key={'form'} style={{ marginTop: '25%', backgroundColor: 'rgba(255,255,255,0.6)', marginHorizontal: 10, borderRadius: 10, }}>
+              <View style={{ alignItems: 'center', paddingTop: 20, }}>
+                <Image source={require('../assets/images/logo-mini.png')} style={{ width: 80, height: 90 }} />
+                <View style={{ alignItems: 'center', }}>
+                  <Text style={{ fontSize: 24, fontWeight: 'bold', fontFamily: 'serif', textTransform: 'uppercase', textAlign: 'center' }}>Mohinder Singh Jewellers</Text>
                 </View>
               </View>
-              <View style={{ width: '100%',paddingHorizontal:20,paddingVertical:15,}}>
-                <Text style={{fontSize: 14,marginBottom:15,textAlign: 'center',textTransform: 'uppercase',fontWeight:'bold'}}>Welcome to Our Mobile App</Text>
+              <View style={{ width: '100%', paddingHorizontal: 20, paddingVertical: 15, }}>
+                <Text style={{ fontSize: 14, marginBottom: 15, textAlign: 'center', textTransform: 'uppercase', fontWeight: 'bold' }}>Welcome to Our Mobile App</Text>
                 {/* <Text style={{fontSize: 20,marginBottom:10,paddingBottom:10,fontWeight: 'bold',textAlign: 'center'}}>Login</Text> */}
-                <View style={{marginBottom:20,flexDirection: 'row', alignItems: 'center',borderWidth: 1, borderRadius:5}}>
-                  <View style={{width:'15%',height:30, justifyContent: 'center',borderRightWidth:1,paddingTop:3}}>
-                    <FontAwesome name="phone" size={24} style={{alignSelf:'center'}} />
+                <View style={{ marginBottom: 20, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 5 }}>
+                  <View style={{ width: '15%', height: 30, justifyContent: 'center', borderRightWidth: 1, paddingTop: 3 }}>
+                    <FontAwesome name="phone" size={24} style={{ alignSelf: 'center' }} />
                   </View>
-                  <View style={{width:'85%'}}>
-                    <TextInput style={{width:'100%'}} placeholderTextColor={'#000'} placeholder='Enter your Mobile Number' onChangeText={(value) => setPhone(value)} keyboardType='number-pad'  />
+                  <View style={{ width: '85%' }}>
+                    <TextInput style={{ width: '100%' }} placeholderTextColor={'#000'} placeholder='Enter your Mobile Number' onChangeText={(value) => setPhone(value)} keyboardType='number-pad' />
                   </View>
                 </View>
-                <View style={{marginBottom:20,flexDirection: 'row', alignItems: 'center',borderWidth: 1, borderRadius:5}}>
-                  <View style={{width:'15%',height:30,justifyContent: 'center',borderRightWidth:1,paddingTop:3}}> 
-                    <MaterialIcons name='password' size={24} style={{alignSelf:'center'}} />
+                <View style={{ marginBottom: 20, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 5 }}>
+                  <View style={{ width: '15%', height: 30, justifyContent: 'center', borderRightWidth: 1, paddingTop: 3 }}>
+                    <MaterialIcons name='password' size={24} style={{ alignSelf: 'center' }} />
                   </View>
-                  <View style={{width:'85%',flexDirection:'row', alignItems: 'center'}}>
-                    <TextInput style={{width:'85%'}} placeholder='Enter your password' placeholderTextColor={'#000'} onChangeText={(value) => setPassword(value)} secureTextEntry={!showPassword}  />
+                  <View style={{ width: '85%', flexDirection: 'row', alignItems: 'center' }}>
+                    <TextInput style={{ width: '85%' }} placeholder='Enter your password' placeholderTextColor={'#000'} onChangeText={(value) => setPassword(value)} secureTextEntry={!showPassword} />
                     {showPassword ? (
-                      <TouchableOpacity onPress={() => setShowPassword(false)} style={{width:'15%',alignItems:'center', borderLeftWidth:1,padding:5}}>
+                      <TouchableOpacity onPress={() => setShowPassword(false)} style={{ width: '15%', alignItems: 'center', borderLeftWidth: 1, padding: 5 }}>
                         <FontAwesome5 name="eye" size={16} />
                       </TouchableOpacity>
                     ) : (
-                      <TouchableOpacity onPress={() => setShowPassword(true)} style={{width:'15%',alignItems:'center', borderLeftWidth:1,padding:5}}>
+                      <TouchableOpacity onPress={() => setShowPassword(true)} style={{ width: '15%', alignItems: 'center', borderLeftWidth: 1, padding: 5 }}>
                         <FontAwesome5 name="eye-slash" size={16} />
                       </TouchableOpacity>
                     )}
                   </View>
                 </View>
                 <View>
-                  <TouchableOpacity style={{backgroundColor:'white',padding:10,borderRadius:5,borderWidth:2,borderColor:'#C2DFD6'}} disabled={loading} onPress={() => handleLogin()}  >  {/*- router.navigate('/dashboard') -*/}
-                    <Text style={[{textAlign:'center',fontWeight:'bold',fontSize:14},(loading? {color:'rgba(0,0,0,0.5)'} : {})]}>{loading? 'Loading...' : 'SIGN IN'}</Text>
+                  <TouchableOpacity style={{ backgroundColor: 'white', padding: 10, borderRadius: 5, borderWidth: 2, borderColor: '#C2DFD6' }} disabled={loading} onPress={() => handleLogin()}  >  {/*- router.navigate('/dashboard') -*/}
+                    <Text style={[{ textAlign: 'center', fontWeight: 'bold', fontSize: 14 }, (loading ? { color: 'rgba(0,0,0,0.5)' } : {})]}>{loading ? 'Loading...' : 'SIGN IN'}</Text>
                   </TouchableOpacity>
-                  <View style={{flexDirection:'row', justifyContent:'center',marginTop:10}}>
+                  <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 10 }}>
                     <Text>Forgot password? </Text>
                     <TouchableOpacity onPress={() => router.navigate('/forgotpassword')} >
-                      <Text style={{color:'#007A5E',fontWeight:'bold'}}>Click here</Text>
+                      <Text style={{ color: '#007A5E', fontWeight: 'bold' }}>Click here</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
-                <View style={{paddingTop:15,flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
-                  <TouchableOpacity onPress={() => router.navigate('/signup')} style={{padding:8,borderRadius:5,backgroundColor:'white', width:'35%',borderWidth:2,borderColor:'#C2DFD6'}}>
-                    <Text style={{textAlign:'center',fontWeight:'bold',fontSize:12}}>SIGN UP</Text>
+                <View style={{ paddingTop: 15, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                  <TouchableOpacity onPress={() => router.navigate('/signup')} style={{ padding: 8, borderRadius: 5, backgroundColor: 'white', width: '35%', borderWidth: 2, borderColor: '#C2DFD6' }}>
+                    <Text style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 12 }}>SIGN UP</Text>
                   </TouchableOpacity>
                 </View>
-                <View style={{marginTop:20}}>
-                  <Text style={{fontSize:12,textAlign:'center',fontFamily:'serif'}}>@Copyright 2025 </Text>
+                <View style={{ marginTop: 20 }}>
+                  <Text style={{ fontSize: 12, textAlign: 'center', fontFamily: 'serif' }}>@Copyright 2025 </Text>
                 </View>
               </View>
             </View>

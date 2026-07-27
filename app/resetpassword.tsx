@@ -35,7 +35,7 @@ export default function ResetPassword(){
         phone: user_phone,
         password: password,
         confirm_password: confirmPassword,
-      });
+      },{headers: {"Content-Type": "application/json","Accept": "application/json"},});
 
       if(response.data.status){
         Toast.show({

@@ -86,6 +86,7 @@ export default function ProfileScreen() {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
+            "Accept": "application/json"
           },
         }
       );
@@ -132,6 +133,7 @@ export default function ProfileScreen() {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
+            "Accept": "application/json"
           },
         }
       );
@@ -286,9 +288,9 @@ export default function ProfileScreen() {
                 alignItems: "center",
                 backgroundColor: "rgba(0,0,0,0.15)"
               }}>
-                <View style={[styles.form, {padding: 25, width: "85%"}]}>
+                <View style={[styles.form, { padding: 25, width: "85%" }]}>
                   <Text style={styles.formTitle}>Verify Password</Text>
-                  <Text style={{marginBottom: 12, textAlign: "center", fontSize: 13}}>
+                  <Text style={{ marginBottom: 12, textAlign: "center", fontSize: 13 }}>
                     To update your mobile number, please enter your password.
                   </Text>
                   <View style={styles.inputRow}>
@@ -304,7 +306,7 @@ export default function ProfileScreen() {
                       onChangeText={setProfilePassword}
                     />
                   </View>
-                  <View style={[styles.radioGroup, {marginTop: 10}]}>
+                  <View style={[styles.radioGroup, { marginTop: 10 }]}>
                     <TouchableOpacity
                       style={styles.radioButton}
                       onPress={() => {
@@ -335,7 +337,7 @@ export default function ProfileScreen() {
             </Modal>
 
             {/* === Change Password Form === */}
-            <View style={[styles.form,{marginTop: 25}]}>
+            <View style={[styles.form, { marginTop: 25 }]}>
               <View style={styles.formHeader}>
                 <Text style={styles.formTitle}>Change Password</Text>
               </View>

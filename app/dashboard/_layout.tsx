@@ -83,6 +83,7 @@ export default function DashboardLayout({ navigation }: any) {
           headers:{
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${userToken}`,
+            'Accept': "application/json"
           },
         });
         if(response.data.status){
@@ -106,6 +107,7 @@ export default function DashboardLayout({ navigation }: any) {
             headers:{
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${userToken}`,
+            'Accept': "application/json"
           },
         });
         if (response.data.status) {
@@ -182,6 +184,7 @@ export default function DashboardLayout({ navigation }: any) {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${userToken}`,
+            'Accept': "application/json"
           }
         });
         const notifications = response.data.data || [];
@@ -211,6 +214,7 @@ export default function DashboardLayout({ navigation }: any) {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${userToken}`,
+          'Accept': "application/json"
         }
       });
       const notifications = response.data.data || [];
@@ -237,7 +241,8 @@ export default function DashboardLayout({ navigation }: any) {
     let response = await axios.get(`${config.apiBaseUrl}/expo-token?token=${token}`, {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiToken}`
+        'Authorization': `Bearer ${apiToken}`,
+        'Accept': "application/json"
       }
     });
     // console.log('token', token);

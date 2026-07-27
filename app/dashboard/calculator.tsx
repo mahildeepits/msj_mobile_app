@@ -35,7 +35,8 @@ export default function CalculatorScreen(){
     const response = await axios.get(`${config.apiBaseUrl}/making-charges`,{
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
+        'Accept': "application/json"
       }
     });
     // console.log(response.data.data[0].id);

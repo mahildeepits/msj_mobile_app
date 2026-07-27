@@ -25,6 +25,7 @@ export default function Dashboard() {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
+          'Accept': "application/json"
         },
       });
       // console.log('jeewdtufiggsuiha',response.data);

@@ -81,7 +81,8 @@ export default function ProductsScreen() {
       const response = await axios.get(`${config.apiBaseUrl}/products`,{
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${userToken}`
+          'Authorization': `Bearer ${userToken}`,
+          'Accept': "application/json"
         }
       });
       if(response.data.status){

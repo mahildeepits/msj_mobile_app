@@ -37,6 +37,7 @@ export default function Slider(){
       let response = await axios.get(`${config.apiBaseUrl}/offers`, {
         headers: {
           'Content-Type': 'application/json',
+          'Accept': "application/json",
           'Authorization': `Bearer ${token}`
         }
       });

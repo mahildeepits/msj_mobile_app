@@ -23,7 +23,8 @@ export default function NotificationPage() {
             const response = await axios.get(`${config.apiBaseUrl}/notifications`, {
               headers: {
                   'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${userToken}`
+                  'Authorization': `Bearer ${userToken}`,
+                  'Accept': "application/json"
               }
             });
             setNotifications(response.data.data || []);
@@ -45,7 +46,8 @@ export default function NotificationPage() {
     const response = await axios.get(`${config.apiBaseUrl}/notifications`, {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${userToken}`
+        'Authorization': `Bearer ${userToken}`,
+        'Accept': "application/json"
       }
     });
     setNotifications(response.data.data || []);
@@ -64,7 +66,8 @@ export default function NotificationPage() {
         await axios.get(`${config.apiBaseUrl}/notifications/${notification.id}/seen`, {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${token}`,
+            'Accept': "application/json"
           }
         });
         setNotifications((prev:any) =>

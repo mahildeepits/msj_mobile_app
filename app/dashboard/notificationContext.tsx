@@ -25,6 +25,7 @@ export const NotificationsProvider: React.FC<{children: React.ReactNode}> = ({ c
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${userToken}`,
+          'Accept': "application/json"
         }
       });
 

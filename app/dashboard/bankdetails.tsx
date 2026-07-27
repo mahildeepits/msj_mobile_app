@@ -33,7 +33,8 @@ export default function BankDetails({ goldcost }: any) {
       const response = await axios.get(`${config.apiBaseUrl}/bank-details`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
+          'Accept': "application/json"
         },
       });
       if(response.data.data){
@@ -64,7 +65,8 @@ export default function BankDetails({ goldcost }: any) {
       const response = await axios.get(`${config.apiBaseUrl}/adress-details`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
+          'Accept': "application/json"
         },
       });
       if(response.data.data){

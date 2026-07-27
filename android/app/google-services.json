@@ -1,21 +1,40 @@
 {
   "project_info": {
-    "project_number": "56308153956",
-    "project_id": "msj-jewellers",
-    "storage_bucket": "msj-jewellers.firebasestorage.app"
+    "project_number": "482338406450",
+    "project_id": "msjapp-3ea81",
+    "storage_bucket": "msjapp-3ea81.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:56308153956:android:d0d6339f8c98194f6b2971",
+        "mobilesdk_app_id": "1:482338406450:android:7282ed20163da51caffc2b",
         "android_client_info": {
-          "package_name": "com.infotech.msj_mobile_app"
+          "package_name": "com.mohindersjew.app"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyA7FJ9-qVuZtRBYd8qw2SsesWbEWQSEi4I"
+          "current_key": "AIzaSyAKoK52qS3ZhYErMOLn_XILBAcek43UHgQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:482338406450:android:eb087339c722e608affc2b",
+        "android_client_info": {
+          "package_name": "com.msj.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKoK52qS3ZhYErMOLn_XILBAcek43UHgQ"
         }
       ],
       "services": {

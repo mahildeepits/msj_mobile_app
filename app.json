@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "msj_mobile_app",
+    "name": "Mohinder Singh Jewellers",
     "slug": "msj_mobile_app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -17,7 +17,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.infotech.msj_mobile_app",
+      "package": "com.mohindersjew.app",
       "googleServicesFile": "./android/app/google-services.json"
     },
     "web": {
